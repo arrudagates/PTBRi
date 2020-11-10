@@ -1,0 +1,37 @@
+eu tenho um numero1 que vale 0.0
+eu tenho um numero2 que vale 0.0
+eu tenho um resultado que vale 0.0
+eu tenho um operador que vale 0
+
+
+entrada operador
+
+entrada numero1
+
+entrada numero2
+
+ambos iguais operador e "+"
+tem certeza?
+acho que sim
+resultado é soma de numero1 e numero2
+resolvido
+
+ambos iguais operador e "-"
+tem certeza?
+acho que sim
+resultado é diferença de numero1 e numero2
+resolvido
+
+ambos iguais operador e "*"
+tem certeza?
+acho que sim
+resultado é produto de numero1 e numero2
+resolvido
+
+ambos iguais operador e "/"
+tem certeza?
+acho que sim
+resultado é quociente de numero1 e numero2
+resolvido
+
+mostre "Qual operação quer fazer? (+,-,*,/):"

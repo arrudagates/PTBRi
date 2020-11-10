@@ -1,0 +1,16 @@
+[package]
+authors = ["Gabriel Arruda <arrudagates@gmail.com>"]
+description = "A LOLCODE based teaching language"
+license-file = "LICENSE"
+name = "PTBRi"
+readme = "README.md"
+repository = "https://github.com/arrudagates/PTBRi"
+version = "0.1.8"
+
+[dependencies]
+failure = "0.1.1"
+unic-char-range = "0.7.0"
+unic-ucd-name = "0.7.0"
+
+[features]
+debug = []

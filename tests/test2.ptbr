@@ -1,0 +1,59 @@
+	comen special characters sadly not supported
+
+	eu tenho um JEDEN que vale 0
+	eu tenho um DWA que vale 0
+	eu tenho um EX que vale 0
+	eu tenho um LNG que vale ""
+	mostre "Choose language." e "|n1. English" e "|n2. portugues"
+	entrada LNG
+	LNG, chave
+		caso "1"
+			mostre "|nWelcome in calculator. |nInput first number:"
+			entrada JEDEN
+			mostre " |nInput second number:"
+            entrada DWA
+			comen JEDEN IS NOW A NUMBAR
+			comen DWA IS NOW A NUMBAR
+			ambos iguais DWA e 0.0, tem certeza?
+				acho que sim
+					mostre "|nChoose an operation: |n1. Add |n2. Subtract |n3. Multiply"
+					entrada EX
+					EX, chave
+						caso "1"
+							mostre soma de JEDEN e DWA
+							quebra
+						caso "2"
+							mostre diferença de JEDEN e DWA
+							quebra
+						caso "3"
+							mostre produto de JEDEN e DWA
+							quebra
+						padrão
+							mostre "Choose the operation through inputing a corresponding number."
+							quebra
+						resolvido
+				acho que não
+					mostre "Choose an operation: |n1. Add |n2. Subtract |n3. Multiply |n4. Divide"
+					entrada EX
+					EX, chave
+						caso "1"
+							mostre soma de JEDEN e DWA
+							quebra
+						caso "2"
+							mostre diferença de JEDEN e DWA
+							quebra
+						caso "3"
+							mostre produto de JEDEN e DWA
+							quebra
+						caso "4"
+							mostre quociente de JEDEN e DWA
+							quebra
+						padrão
+							mostre "Choose the operation through inputting a corresponding number."
+							quebra
+						resolvido
+			resolvido
+			quebra
+		padrão
+			mostre "Those are only supported languages rn. Feel free to add translations."
+		resolvido
