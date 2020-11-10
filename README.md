@@ -2,45 +2,32 @@
 
 ## Português
 
-PTBRi é um interpretador de PTBR, fork do lci, um interpretador de LOLCODE
+PTBRi é um interpretador de PTBR, fork do [rust-lci](https://github.com/jD91mZM2/rust-lci), um interpretador de LOLCODE escrito em Rust
 
 PTBR é basicamente LOLCODE, porém sem as piadas e traduzido para Português.
 O motivo por trás do projeto é ter uma linguagem simples para ensinar o básico de programação.
 
 
-### Instalação:  Linux e Mac OS
+### Uso:  Linux e Mac OS
 
-Utilize o script install.py, notando que:
+Utilizando cargo, rode:
 
-`$ ./install.py -h`
-
-Mostrará uma lista de opções relevantes. Por exemplo, para instalar PTBRi
-no diretório `/home/foo/opt`, rode:
-
-`$ ./install.py --prefix="/home/foo/opt"`
-
+`$ cargo run <file>`
 
 
 ## English
 
-PTBRi is a PTBR interpreter forked from lci, the LOLCODE interpreter
+PTBRi is a PTBR interpreter forked from [rust-lci](https://github.com/jD91mZM2/rust-lci), a LOLCODE interpreter written in Rust
 
 PTBR is basically LOLCODE, but without the jokes and translated to Portuguese.
 The reason behind it is for it to be a simple language to teach coding basics.
 
-Forked from lci, which was created by Justin J. Meza (http://justinmeza.com).
 
+### Usage:  Linux and Mac OS
 
-### Installation:  Linux and Mac OS
+Using cargo, run:
 
-Run the script install.py. Note that
-
-`$ ./install.py -h`
-
-will display a list of relavent install options. For example, to install PTBRi to
-the directory `/home/foo/opt`, run:
-
-`$ ./install.py --prefix="/home/foo/opt"`
+`$ cargo run <file>`
 
 
 ### License
