@@ -245,6 +245,7 @@ impl<I: Iterator<Item = char> + Clone> Tokenizer<I> {
                 }
                 return self.next();
             },
+//TODO: multiline comments
             "comentário" => {
                 loop {
                     match self.peek() {
@@ -343,12 +344,10 @@ impl<I: Iterator<Item = char> + Clone> Tokenizer<I> {
                     "que" => {
                         match &*clone.word() {
                             "sim" => {
-                                println!("sim");
                                *self = clone;
                         return Ok(Some(Token::YaRly));
                             },
                             "não" => {
-                                println!("nao");
                                *self = clone;
                         return Ok(Some(Token::NoWai));
                             },
@@ -361,7 +360,7 @@ impl<I: Iterator<Item = char> + Clone> Tokenizer<I> {
                 }
            },
 
-            "MEBBE" => return Ok(Some(Token::Mebbe)),
+            "talvez" => return Ok(Some(Token::Mebbe)),
             "resolvido" => return Ok(Some(Token::Oic)),
             "chave" => return Ok(Some(Token::Wtf)),
             "caso" => return Ok(Some(Token::Omg)),

@@ -182,10 +182,10 @@ impl<I: Iterator<Item = Token>> Parser<I> {
             },
             Some(&Token::ORly) => {
                 self.iter.next();
-                println!("{:?}", self.iter.peek());
+                //println!("{:?}", self.iter.peek());
                 self.expect(Token::Separator)?;
                 self.trim();
-               println!("{:?}", self.iter.peek());
+                //println!("{:?}", self.iter.peek());
                 self.expect(Token::YaRly)?;
                 self.expect(Token::Separator)?;
                 let yarly = self.block(&[Token::Mebbe, Token::NoWai, Token::Oic])?;
