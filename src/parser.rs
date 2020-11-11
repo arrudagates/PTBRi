@@ -119,7 +119,7 @@ impl<I: Iterator<Item = Token>> Parser<I> {
     /// Read one statement from the AST, including trailing line separator
     pub fn statement(&mut self) -> Result<Option<AST>> {
         let stmt = self.inner_statement()?;
-       println!("{:?}", stmt);
+       //println!("{:?}", stmt);
         match self.iter.next() {
 
             None | Some(Token::Separator) => Ok(stmt),
