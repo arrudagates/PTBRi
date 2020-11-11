@@ -1,20 +1,25 @@
-# .github/workflows/release.yml
+name: Bump version, create new tag and release point
 on:
   push:
     branches:
       - master
 
 jobs:
-  release:
-    name: release ${{ matrix.target }}
+  bump_version:
+    name: Bump version, create tag/release point
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        target: [x86_64-unknown-linux-gnu]
     steps:
-      - uses: actions/checkout@master
-      - name: Compile and release
-        uses: Douile/rust-build.action@v0.1.7
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Bump version and push tag/create release point
+        id: bump_version
+        uses: anothrNick/github-tag-action@1.17.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          RUSTTARGET: ${{ matrix.target }}
+          WITH_V: true
+      - name: Repository dispatch tag created event
+        uses: peter-evans/repository-dispatch@v1
+        with:
+          token: ${{ secrets.REPO_ACCESS_TOKEN }}
+          event-type: tag-created
+          client-payload: '{"new_version": "${{ steps.bump_version.outputs.new_tag }}"}'
