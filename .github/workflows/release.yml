@@ -14,6 +14,9 @@ jobs:
           - os: ubuntu-latest
             artifact_name: PTBRi
             asset_name: PTBRi-linux-amd64
+          - os: windows-latest
+            artifact_name: PTBRi
+            asset_name: PTBRi-windows-amd64
           - os: macos-latest
             artifact_name: PTBRi
             asset_name: PTBRi-macos-amd64
