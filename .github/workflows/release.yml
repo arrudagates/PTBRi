@@ -12,13 +12,13 @@ jobs:
       matrix:
         include:
           - os: ubuntu-latest
-            artifact_name: PTBRi
+            artifact_name: ptbri
             asset_name: PTBRi-linux
           - os: windows-latest
-            artifact_name: PTBRi.exe
+            artifact_name: ptbri.exe
             asset_name: PTBRi-windows.exe
           - os: macos-latest
-            artifact_name: PTBRi
+            artifact_name: ptbri
             asset_name: PTBRi-macos
     steps:
       - name: Checkout code
