@@ -76,23 +76,23 @@ mod tests {
             PONG 2\n\
             PING 1\n"
         );
-        assert_eq!(
-            run(include_str!("../tests/quine.lol")).expect("Running test failed"),
-            include_str!("../tests/quine.lol")
-        );
+        //assert_eq!(
+            //run(include_str!("../tests/quine.lol")).expect("Running test failed"),
+            //include_str!("../tests/quine.lol")
+        //);
     }
 
-    #[test]
-    fn rust_callback() {
-        assert_eq!(
-            capture(include_str!("../tests/callback.lol"), io::empty(), |eval| {
-                eval.bind_func("LOWERIN", Some(1), |values| {
-                    Value::Yarn(values[0].clone().cast_yarn().unwrap().to_lowercase())
-                });
-            }).expect("Running test failed"),
-            "test\n"
-        );
-    }
+    //#[test]
+    //fn rust_callback() {
+     //   assert_eq!(
+      //      capture(include_str!("../tests/callback.lol"), io::empty(), |eval| {
+       //         eval.bind_func("LOWERIN", Some(1), |values| {
+        //            Value::Yarn(values[0].clone().cast_yarn().unwrap().to_lowercase())
+         //       });
+          //  }).expect("Running test failed"),
+          //  "test\n"
+        //);
+    //}
 
     #[test]
     fn run_fails() {

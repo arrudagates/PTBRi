@@ -3,11 +3,11 @@ eu tenho um numero2 que vale 0.0
 eu tenho um resultado que vale 0.0
 eu tenho um operador que vale 0
 
-
+mostre "operador: "
 entrada operador
-
+mostre "numero 1: "
 entrada numero1
-
+mostre "numero 2: "
 entrada numero2
 
 ambos iguais operador e "+"
@@ -34,4 +34,4 @@ acho que sim
 resultado é quociente de numero1 e numero2
 resolvido
 
-mostre "Qual operação quer fazer? (+,-,*,/):"
+mostre "resultado: " e resultado

@@ -1,4 +1,4 @@
-extern crate PTBRi;
+extern crate ptbri;
 
 use std::{env, fs, io};
 
@@ -24,7 +24,7 @@ fn main() {
     let stdout = io::stdout();
     let stdout = stdout.lock();
 
-    match PTBRi::eval(&input, stdin, stdout, |_| ()) {
+    match ptbri::eval(&input, stdin, stdout, |_| ()) {
         Ok(()) => (),
         Err(err) => {
             eprintln!("{}", err);

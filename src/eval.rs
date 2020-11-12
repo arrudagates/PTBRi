@@ -47,7 +47,7 @@ pub struct EvalParams<R: io::BufRead, W: io::Write> {
     stdin: R,
     stdout: W,
 
-    funcs: HashMap<String, (Option<usize>, Box<FnMut(Vec<Value>) -> Value>)>,
+    funcs: HashMap<String, (Option<usize>, Box<dyn FnMut(Vec<Value>) -> Value>)>,
     recursion_limit: usize,
     recursion: usize
 }

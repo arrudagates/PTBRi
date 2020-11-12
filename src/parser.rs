@@ -150,19 +150,16 @@ impl<I: Iterator<Item = Token>> Parser<I> {
             Some(&Token::IHasA) => {
                 self.iter.next();
                 let ident = self.expect_ident()?;
-              // println!("{:?}",self.iter);
                 match self.iter.peek() {
-                    _ | Some(&Token::Itz) => {
+                    Some(&Token::Itz) => {
                         self.iter.next();
-                        self.iter.next();
-                       // println!("{:?}", self.iter.peek());
                         let expression = self.expect_expr()?;
                         Ok(Some(AST::IHasA(ident, expression)))
                     },
                     None | Some(&Token::Separator) => {
                         Ok(Some(AST::IHasA(ident, Expr::Value(Value::Noob))))
-                    }//,
-                   // _ => Err(Error::Trailing)
+                    },
+                    _ => Err(Error::Trailing)
                 }
             },
             Some(&Token::Ident(_)) => {

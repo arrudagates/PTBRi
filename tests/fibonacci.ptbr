@@ -1,0 +1,18 @@
+eu tenho um i que vale 9
+função fib com n
+
+       ambos iguais n e menor de n e 1
+       tem certeza?
+        acho que sim
+            retorne n
+        acho que não
+            eu tenho um x que vale diferença de n e 1
+            eu tenho um y que vale diferença de n e 2
+            eu tenho um a que vale chame a função fib com x
+            eu tenho um b que vale chame a função fib com y
+            retorne soma de a e b
+       resolvido
+
+final da função
+
+mostre chame a função fib com i

@@ -293,7 +293,14 @@ impl<I: Iterator<Item = char> + Clone> Tokenizer<I> {
                     _ => ()
                 }
            },
-            "que vale" => return Ok(Some(Token::Itz)),
+           "que" => {
+                let mut clone = self.clone();
+                if clone.word() == "vale" {
+                    *self = clone;
+                    return Ok(Some(Token::Itz));
+                }
+            },
+            //"que vale" => return Ok(Some(Token::Itz)),
             "é" => return Ok(Some(Token::R)),
             "soma" | "diferença" | "produto" | "quociente" | "módulo" | "maior" | "menor" |
             "ambos" | "qualquer" | "WON" | "todos" | "algum" => {
