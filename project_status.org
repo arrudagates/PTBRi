@@ -1,0 +1,17 @@
+#+TITLE: PTBRi Project Management
+
+* Tasks
+
+** DONE C -> Rust
+** TODO Finish Translation
+** TODO Implement New Methods/Syntax
++ Traditional IF Syntax
+** TODO Research And Rewrite Syntax
+** TODO Clean Code And Rewrite Tokenizer
+** TODO Rewrite Built-in Tests
+** TODO Create Variations For Methods/Syntax
+** TODO Document Everything
+** TODO Make The Project Work In WebAssembly
+
+* Bugs
+** TODO Fix function call delimiters (MKAY)
