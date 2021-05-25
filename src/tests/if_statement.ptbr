@@ -1,0 +1,33 @@
+a é 1
+
+se a é 1
+mostre "true"
+até aqui
+
+se a não é 1
+mostre "false"
+até aqui
+
+se a é 0
+mostre "false"
+até aqui
+
+se a não é 0
+mostre "true"
+até aqui
+
+se a é maior que 0
+mostre "true"
+até aqui
+
+se a não é maior que 1
+mostre "true"
+até aqui
+
+se a é maior ou igual a 2
+mostre "false"
+até aqui
+
+se a não é maior ou igual a 1
+mostre "false"
+até aqui

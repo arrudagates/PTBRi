@@ -1,0 +1,65 @@
+ident = @{(unicode_letter | number)+}
+define_variable = {ident ~ space ~ is ~ space ~ (expression | value | ident)}
+value = {number | string}
+
+plus = _{"mais"}
+minus = _{"menos"}
+times = _{"vezes"}
+divided = _{"dividido por"}
+is = _{"é"}
+is_op = {"é"}
+is_not_op = {"não é"}
+bigger_than = {"maior que"}
+smaller_than = {"menor que"}
+bigger_than_eq = {"maior ou igual a"}
+smaller_than_eq = {"menor ou igual a"}
+space = _{" "}
+mostre_kwd = _{"mostre"}
+and_kwd = _{"e"}
+se_kwd = _{"se"}
+
+sum_expr = {(value | ident) ~ space ~ plus ~ space ~ (value | ident)}
+
+subtraction_expr = {(value | ident) ~ space ~ minus ~ space ~ (value | ident)}
+
+multiply_expr = {(value | ident) ~ space ~ times ~ space ~ (value | ident)}
+
+divide_expr = {(value | ident) ~ space ~ divided ~ space ~ (value | ident)}
+
+expression = {sum_expr | subtraction_expr | multiply_expr | divide_expr}
+
+
+mostre = {mostre_kwd ~ space ~ ((expression | value | ident) ~ (space ~ and_kwd ~ space)+)* ~ (expression | value | ident)}
+
+se_operador = {(is_op | is_not_op) ~ (space ~ (bigger_than_eq | smaller_than_eq | bigger_than | smaller_than))?}
+
+se = {se_kwd ~ space ~ (value | ident | expression) ~ space ~ se_operador ~ space ~ (value | ident | expression) ~ "\n" ~ (stmt ~ "\n"+)+ ~ se_end}
+
+se_end = {"até aqui"}
+
+line = {define_variable | mostre | se}
+stmt = _{line}
+
+program = _{ SOI ~ "\n"* ~ (stmt ~ "\n"+) * ~ stmt? ~ EOI }
+
+number = @{
+      "-"?
+      ~ ("0" | ASCII_NONZERO_DIGIT ~ ASCII_DIGIT*)
+    ~ ("." ~ ASCII_DIGIT*)?
+    ~ (^"e" ~ ("+" | "-")? ~ ASCII_DIGIT+)?
+}
+string = ${ "\"" ~ inner ~ "\"" }
+inner = @{ char* }
+char = {
+      !("\"" | "\\") ~ ANY
+    | "\\" ~ ("\"" | "\\" | "/" | "b" | "f" | "n" | "r" | "t")
+    | "\\" ~ ("u" ~ ASCII_HEX_DIGIT{4})
+}
+unicode_letter = {
+      UPPERCASE_LETTER |
+    LOWERCASE_LETTER |
+    TITLECASE_LETTER |
+    MODIFIER_LETTER |
+    OTHER_LETTER |
+    LETTER_NUMBER
+}
