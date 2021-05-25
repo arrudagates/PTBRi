@@ -1,5 +1,7 @@
 # PTBR interpreter
 
+![example workflow](https://github.com/arrudagates/PTBRi/actions/workflows/rust.yml/badge.svg)
+
 ## What is PTBR?
 
 PTBR is a language being developed for easy understanding with it's main goal to be a simple way to introduce Portuguese speakers without any technical background to programming
