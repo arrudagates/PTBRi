@@ -46,6 +46,10 @@ a dividido por 1
 
 If statements are written as the keyword `se` followed by a comparison operator (and optionally a modifier) surrounded by a value/identifier/expression on both sides
 
+If statements can also have an else statement after the code block and the end keyword, explained at the section "Else"
+
+If statements require code to be run, everything between the if statement and the keyword `até aqui` is considered inner code of the if statement
+
 Valid comparison operators are:
 - é
 - não é
@@ -66,4 +70,45 @@ se a não é maior que 1
 se a não é menor que 1
 se a é maior ou igual a 1
 se a é menor ou igual a 1
+```
+
+## Else
+
+Else statements are an optional follow up to an if statement, if that statement evaluates to false, the interpreter will jump to the `senão` keyword immediately after the end keyword, if present
+
+Else statements require code to be run, everything between the else statement and the keyword `até aqui` is considered inner code of the else statement
+
+Example:
+```
+se a é 1
+mostre a
+até aqui
+
+senão
+mostre "não é 1"
+até aqui
+```
+
+## While Loops
+
+While loops are written as the keyword `enquanto` followed by a comparison operator (and optionally a modifier) surrounded by a value/identifier/expression on both sides
+
+While loops require code to be run, everything between the while loop and the keyword `até aqui` is considered inner code of the while loop
+
+Valid comparison operators are:
+- for
+- não for
+
+Valid comparison modifiers are:
+- maior que
+- menor que
+- maior ou igual a
+- menor ou igual a
+
+Example:
+```
+enquanto a for 1
+enquanto a não for 1
+enquanto a for maior que 1
+enquanto a não for menor ou igual a 1
 ```

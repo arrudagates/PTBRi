@@ -1,4 +1,2 @@
 /target
 Cargo.lock
-/tests/release
-/tests/.rustc.info.json

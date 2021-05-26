@@ -1,4 +1,4 @@
-use std::{env::args, fs};
+use std::{collections::HashMap, env::args, fs};
 
 extern crate pest;
 #[macro_use]
@@ -8,13 +8,14 @@ use pest::Parser;
 
 mod interpreter;
 pub use interpreter::*;
-mod tests;
+mod types;
+pub use types::*;
 
 #[derive(Parser)]
 #[grammar = "ptbr.pest"]
 struct PTBRParser;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum Op {
     Sum,
     Sub,
@@ -22,13 +23,13 @@ pub enum Op {
     Div,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum Se {
     Is,
     Isnt,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum Mod {
     Smlr,
     Bigr,
@@ -36,10 +37,10 @@ pub enum Mod {
     BigrEq,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum AstNode {
     Print(Vec<Box<AstNode>>),
-    Integer(i32),
+    Val(Value),
     Operation {
         op: Op,
         left: Box<AstNode>,
@@ -50,8 +51,15 @@ pub enum AstNode {
         expr: Box<AstNode>,
     },
     Ident(String),
-    String(String),
     If {
+        se: Se,
+        modifier: Option<Mod>,
+        left: Box<AstNode>,
+        right: Box<AstNode>,
+        block: Vec<Box<AstNode>>,
+        senao: Option<Vec<Box<AstNode>>>,
+    },
+    While {
         se: Se,
         modifier: Option<Mod>,
         left: Box<AstNode>,
@@ -86,8 +94,9 @@ pub fn main() {
             _ => {}
         }
     }
+    let mut variables: HashMap<String, Value> = HashMap::new();
     //println!("ast: {:#?}", ast);
-    interpret(ast);
+    interpret(ast, &mut variables);
 }
 
 fn build_ast_from_expr(pair: pest::iterators::Pair<Rule>) -> AstNode {
@@ -161,6 +170,56 @@ fn build_ast_from_expr(pair: pest::iterators::Pair<Rule>) -> AstNode {
                 right: Box::new(build_ast_from_expr(right)),
                 block: pair
                     .next()
+                    .unwrap()
+                    .into_inner()
+                    .into_iter()
+                    .map(|pair| Box::new(build_ast_from_expr(pair)))
+                    .collect(),
+                senao: {
+                    if let Some(senao_block) = pair.next() {
+                        Some(
+                            senao_block
+                                .into_inner()
+                                .into_iter()
+                                .map(|pair| Box::new(build_ast_from_expr(pair)))
+                                .collect(),
+                        )
+                    } else {
+                        None
+                    }
+                },
+            }
+        }
+        Rule::enquanto => {
+            let mut pair = pair.into_inner();
+            let left = pair.next().unwrap();
+            let mut op_inner = pair.next().unwrap().into_inner();
+            let op = op_inner.next().unwrap();
+            let modifier = op_inner.next();
+            let right = pair.next().unwrap();
+            AstNode::While {
+                se: match op.as_rule() {
+                    Rule::for_op => Se::Is,
+                    Rule::nao_for_op => Se::Isnt,
+                    _ => panic!("Only operators accepted for enquanto are 'for' and 'não for'"),
+                },
+                modifier: if let Some(modifier) = modifier {
+                    match modifier.as_rule() {
+                        Rule::bigger_than => Some(Mod::Bigr),
+                        Rule::smaller_than => Some(Mod::Smlr),
+                        Rule::bigger_than_eq => Some(Mod::BigrEq),
+                        Rule::smaller_than_eq => Some(Mod::SmlrEq),
+                        _ => panic!("Only modifiers accepted are 'menor que' and 'maior que'"),
+                    }
+                } else {
+                    None
+                },
+                left: Box::new(build_ast_from_expr(left)),
+                right: Box::new(build_ast_from_expr(right)),
+                block: pair
+                    .next()
+                    .unwrap()
+                    .into_inner()
                     .into_iter()
                     .map(|pair| Box::new(build_ast_from_expr(pair)))
                     .collect(),
@@ -175,18 +234,28 @@ fn build_ast_from_expr(pair: pest::iterators::Pair<Rule>) -> AstNode {
         }
         Rule::value => build_ast_from_expr(pair.into_inner().next().unwrap()),
         Rule::expression => build_ast_from_expr(pair.into_inner().next().unwrap()),
-        Rule::number => {
-            let integer: i32 = pair
-                .as_str()
-                .parse()
-                .expect("Failed to parse integer from &str");
-            AstNode::Integer(integer)
-        }
+        Rule::integer => AstNode::Val(Value::Integer(
+            pair.as_str().parse().expect("Failed to parse i32"),
+        )),
+        Rule::float => AstNode::Val(Value::Float(
+            pair.as_str().parse().expect("Failed to parse f32"),
+        )),
         Rule::ident => {
             let ident: String = String::from(pair.as_str());
             AstNode::Ident(ident)
         }
-        Rule::string => AstNode::String(String::from(pair.as_str())),
+        Rule::boolean => match pair.into_inner().next().unwrap().as_rule() {
+            Rule::verdadeiro => AstNode::Val(Value::Bool(true)),
+            Rule::falso => AstNode::Val(Value::Bool(false)),
+            _ => panic!("Seriously how did this happen?"),
+        },
+        Rule::string => AstNode::Val(Value::String(String::from(
+            pair.as_str()
+                .strip_prefix("\"")
+                .expect("prefix not present")
+                .strip_suffix("\"")
+                .expect("suffix not present"),
+        ))),
         Rule::mostre => {
             let mut vec: Vec<Box<AstNode>> = Vec::new();
             for pair in pair.clone().into_inner() {

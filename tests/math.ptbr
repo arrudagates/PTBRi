@@ -1,0 +1,17 @@
+a é 10
+b é 2
+
+mostre "a = 10, b = 2"
+mostre "a mais b = " e a mais b
+mostre "a menos b = " e a menos b
+mostre "a vezes b = " e a vezes b
+mostre "a dividido por b = " e a dividido por b
+
+a é 10
+b é 2.5
+
+mostre "a = 10, b = 2.5"
+mostre "a mais b = " e a mais b
+mostre "a menos b = " e a menos b
+mostre "a vezes b = " e a vezes b
+mostre "a dividido por b = " e a dividido por b

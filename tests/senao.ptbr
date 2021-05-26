@@ -1,0 +1,12 @@
+a é 1
+
+se a é maior que 2
+mostre "maior que 2"
+até aqui
+
+senão
+a é 2
+mostre "senão"
+até aqui
+
+mostre a
