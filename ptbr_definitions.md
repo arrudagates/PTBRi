@@ -112,3 +112,35 @@ enquanto a não for 1
 enquanto a for maior que 1
 enquanto a não for menor ou igual a 1
 ```
+
+## Function Definition
+
+Function definitions are written as the keyword `defina a função` followed by an identifier and optionally the keyword `usando` and a chain of identifiers to be used inside the scope of the function
+
+Functions require code to be run, everything between the function definition and the keyword `até aqui` is considered inner code of the function
+
+Example:
+```
+defina a função teste
+mostre "teste"
+até aqui
+
+defina a função soma usando a e b
+mostre a mais b
+até aqui
+```
+
+## Function Calls
+
+Function calls are written as the keyword `função` followed by it's identifier and optionally the keyword `usando` and a chain of identifiers to be used by the function, if it's declared with identifiers
+
+Example:
+```
+função teste
+
+
+a é 2
+b é 5
+
+função soma usando a e b
+```

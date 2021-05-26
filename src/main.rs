@@ -66,6 +66,15 @@ pub enum AstNode {
         right: Box<AstNode>,
         block: Vec<Box<AstNode>>,
     },
+    Function {
+        ident: String,
+        vars: Vec<String>,
+        block: Vec<Box<AstNode>>,
+    },
+    FunctionCall {
+        ident: String,
+        vars: Vec<String>,
+    },
     IfEnd,
 }
 
@@ -95,8 +104,9 @@ pub fn main() {
         }
     }
     let mut variables: HashMap<String, Value> = HashMap::new();
+    let mut functions: HashMap<String, (Vec<String>, Vec<Box<AstNode>>)> = HashMap::new();
     //println!("ast: {:#?}", ast);
-    interpret(ast, &mut variables);
+    interpret(ast, &mut variables, &mut functions);
 }
 
 fn build_ast_from_expr(pair: pest::iterators::Pair<Rule>) -> AstNode {
@@ -262,6 +272,35 @@ fn build_ast_from_expr(pair: pest::iterators::Pair<Rule>) -> AstNode {
                 vec.push(Box::new(build_ast_from_expr(pair)));
             }
             AstNode::Print(vec)
+        }
+        Rule::function => {
+            let mut pair = pair.into_inner();
+            let ident = String::from(pair.next().unwrap().as_str());
+            let mut vars: Vec<String> = vec![];
+            if let Rule::function_signature = pair.next().unwrap().as_rule() {
+                for pair in pair.clone() {
+                    vars.push(String::from(pair.as_str()));
+                }
+            }
+            let block = pair
+                .next()
+                .unwrap()
+                .into_inner()
+                .into_iter()
+                .map(|pair| Box::new(build_ast_from_expr(pair)))
+                .collect();
+            AstNode::Function { ident, vars, block }
+        }
+        Rule::function_call => {
+            let mut pair = pair.into_inner();
+            let ident = String::from(pair.next().unwrap().as_str());
+            let mut vars: Vec<String> = vec![];
+            if let Rule::function_signature = pair.next().unwrap().as_rule() {
+                for pair in pair.clone() {
+                    vars.push(String::from(pair.as_str()));
+                }
+            }
+            AstNode::FunctionCall { ident, vars }
         }
         _ => {
             println!("pair not implemented: {:#?}", pair);

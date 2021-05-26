@@ -21,6 +21,9 @@ and_kwd = _{"e"}
 se_kwd = _{"se"}
 senao_kwd = _{"senão"}
 while_kwd = _{"enquanto"}
+function_kwd = _{"defina a função"}
+function_call_kwd = _{"função"}
+using_kwd = _{"usando"}
 
 sum_expr = {(value | ident) ~ space ~ plus ~ space ~ (value | ident)}
 
@@ -34,6 +37,13 @@ expression = {sum_expr | subtraction_expr | multiply_expr | divide_expr}
 
 
 mostre = {mostre_kwd ~ space ~ ((expression | value | ident) ~ (space ~ and_kwd ~ space)+)* ~ (expression | value | ident)}
+
+function_ident = @{ident}
+function = {function_kwd ~ space ~ function_ident ~  function_signature ~ "\n" ~ block_section ~ se_end}
+
+function_call = {function_call_kwd ~ space ~ function_ident ~ function_signature?}
+
+function_signature = {space ~ using_kwd ~ space ~ ident ~ (space ~ and_kwd ~ space ~ ident)*}
 
 se_operador = {(is_op | is_not_op) ~ (space ~ (bigger_than_eq | smaller_than_eq | bigger_than | smaller_than))?}
 
@@ -49,7 +59,7 @@ enquanto = {while_kwd ~ space ~ (value | ident | expression) ~ space ~ enquanto_
 
 block = _{stmt ~ "\n"+}
 block_section = {block+}
-line = {define_variable | mostre | se | enquanto}
+line = {define_variable | mostre | se | enquanto | function | function_call}
 stmt = _{line}
 
 program = _{ SOI ~ "\n"* ~ (stmt ~ "\n"+) * ~ stmt? ~ EOI }
