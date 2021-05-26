@@ -82,4 +82,17 @@ mod tests {
             panic!("Cargo build failed");
         }
     }
+
+    #[test]
+    fn function() {
+        if let Ok(_) = Command::new("cargo").args(&["build", "--release"]).output() {
+            let output = Command::new("target/release/ptbri")
+                .arg("tests/function.ptbr")
+                .output()
+                .expect("Failed to run ptbri");
+            assert_eq!(output.stdout, "2 4\n6\n".as_bytes())
+        } else {
+            panic!("Cargo build failed");
+        }
+    }
 }

@@ -32,6 +32,8 @@ impl AstNode {
                     .to_owned(),
             ),
             AstNode::Val(value) => Some(value),
+            AstNode::Function { .. } => None,
+            AstNode::FunctionCall { .. } => None,
         }
     }
 }
@@ -42,7 +44,11 @@ macro_rules! compare {
     };
 }
 
-pub fn interpret(program: Vec<Box<AstNode>>, mut variables: &mut HashMap<String, Value>) {
+pub fn interpret(
+    program: Vec<Box<AstNode>>,
+    mut variables: &mut HashMap<String, Value>,
+    mut functions: &mut HashMap<String, (Vec<String>, Vec<Box<AstNode>>)>,
+) {
     let iterator = program.into_iter();
 
     for step in iterator {
@@ -99,10 +105,10 @@ pub fn interpret(program: Vec<Box<AstNode>>, mut variables: &mut HashMap<String,
                     &right.clone().get_value(&variables).unwrap(),
                     comp
                 ) {
-                    interpret(block, &mut variables);
+                    interpret(block, &mut variables, &mut functions);
                 } else {
                     if let Some(block) = senao {
-                        interpret(block, &mut variables)
+                        interpret(block, &mut variables, &mut functions)
                     } else {
                         ()
                     }
@@ -147,10 +153,30 @@ pub fn interpret(program: Vec<Box<AstNode>>, mut variables: &mut HashMap<String,
                     &right.clone().get_value(&variables).unwrap(),
                     comp
                 ) {
-                    interpret(block.clone(), &mut variables)
+                    interpret(block.clone(), &mut variables, &mut functions)
                 }
             }
             AstNode::Val(_) => {}
+            AstNode::Function { ident, vars, block } => {
+                functions.insert(ident, (vars, block));
+            }
+            AstNode::FunctionCall { ident, vars } => {
+                let function = functions.get(&ident).expect("Function not found");
+                let mut scope_variables: HashMap<String, Value> = HashMap::new();
+                vars.into_iter().for_each(|ident| {
+                    scope_variables
+                        .insert(
+                            ident.clone(),
+                            variables
+                                .get(&ident)
+                                .expect("Variable not found")
+                                .to_owned(),
+                        )
+                        .expect("Failed to insert variable into scope");
+                });
+
+                interpret(function.1.clone(), variables, functions);
+            }
         }
     }
 }
