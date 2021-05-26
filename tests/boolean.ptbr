@@ -1,0 +1,13 @@
+a é verdadeiro
+b é falso
+
+mostre a
+mostre b
+
+se a é b
+mostre "algo de errado não está certo"
+até aqui
+
+se a não é b
+mostre "verdadeiro não é falso"
+até aqui

@@ -1,6 +1,6 @@
 ident = @{(unicode_letter | number)+}
 define_variable = {ident ~ space ~ is ~ space ~ (expression | value | ident)}
-value = {number | string}
+value = {number | string | boolean}
 
 plus = _{"mais"}
 minus = _{"menos"}
@@ -9,6 +9,8 @@ divided = _{"dividido por"}
 is = _{"é"}
 is_op = {"é"}
 is_not_op = {"não é"}
+for_op = {"for"}
+nao_for_op = {"não for"}
 bigger_than = {"maior que"}
 smaller_than = {"menor que"}
 bigger_than_eq = {"maior ou igual a"}
@@ -17,6 +19,8 @@ space = _{" "}
 mostre_kwd = _{"mostre"}
 and_kwd = _{"e"}
 se_kwd = _{"se"}
+senao_kwd = _{"senão"}
+while_kwd = _{"enquanto"}
 
 sum_expr = {(value | ident) ~ space ~ plus ~ space ~ (value | ident)}
 
@@ -33,21 +37,33 @@ mostre = {mostre_kwd ~ space ~ ((expression | value | ident) ~ (space ~ and_kwd 
 
 se_operador = {(is_op | is_not_op) ~ (space ~ (bigger_than_eq | smaller_than_eq | bigger_than | smaller_than))?}
 
-se = {se_kwd ~ space ~ (value | ident | expression) ~ space ~ se_operador ~ space ~ (value | ident | expression) ~ "\n" ~ (stmt ~ "\n"+)+ ~ se_end}
+enquanto_operador = {(for_op | nao_for_op) ~ (space ~ (bigger_than_eq | smaller_than_eq | bigger_than | smaller_than))?}
 
-se_end = {"até aqui"}
+se = {se_kwd ~ space ~ (value | ident | expression) ~ space ~ se_operador ~ space ~ (value | ident | expression) ~ "\n" ~ block_section ~ se_end ~ ("\n"+ ~ senao)?}
 
-line = {define_variable | mostre | se}
+se_end = _{"até aqui"}
+
+senao = {senao_kwd ~ "\n" ~ (stmt ~ "\n"+)+ ~ se_end}
+
+enquanto = {while_kwd ~ space ~ (value | ident | expression) ~ space ~ enquanto_operador ~ space ~ (value | ident | expression) ~ "\n" ~ block_section ~ se_end}
+
+block = _{stmt ~ "\n"+}
+block_section = {block+}
+line = {define_variable | mostre | se | enquanto}
 stmt = _{line}
 
 program = _{ SOI ~ "\n"* ~ (stmt ~ "\n"+) * ~ stmt? ~ EOI }
 
-number = @{
-      "-"?
-      ~ ("0" | ASCII_NONZERO_DIGIT ~ ASCII_DIGIT*)
-    ~ ("." ~ ASCII_DIGIT*)?
-    ~ (^"e" ~ ("+" | "-")? ~ ASCII_DIGIT+)?
-}
+verdadeiro = {"verdadeiro"}
+falso = {"falso"}
+boolean = {verdadeiro | falso}
+
+integer = { "-"? ~ ASCII_DIGIT+ }
+
+float = { "-"? ~ ASCII_DIGIT+ ~ "." ~ ASCII_DIGIT+ }
+
+number = _{ float | integer }
+
 string = ${ "\"" ~ inner ~ "\"" }
 inner = @{ char* }
 char = {
