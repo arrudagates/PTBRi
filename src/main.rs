@@ -76,6 +76,7 @@ pub enum AstNode {
         vars: Vec<String>,
     },
     IfEnd,
+    Entrada(InputType),
 }
 
 pub fn main() {
@@ -301,6 +302,14 @@ fn build_ast_from_expr(pair: pest::iterators::Pair<Rule>) -> AstNode {
                 }
             }
             AstNode::FunctionCall { ident, vars }
+        }
+        Rule::entrada => {
+            let pair = pair.into_inner().next().unwrap();
+            match pair.as_rule() {
+                Rule::numero => AstNode::Entrada(InputType::Number),
+                Rule::texto => AstNode::Entrada(InputType::String),
+                _ => panic!("Entrada não é texto ou númeor"),
+            }
         }
         _ => {
             println!("pair not implemented: {:#?}", pair);

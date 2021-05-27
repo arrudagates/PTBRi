@@ -1,5 +1,5 @@
 ident = @{(unicode_letter | number)+}
-define_variable = {ident ~ space ~ is ~ space ~ (expression | value | ident)}
+define_variable = {ident ~ space ~ is ~ space ~ (expression | value | entrada | ident)}
 value = {number | string | boolean}
 
 plus = _{"mais"}
@@ -24,6 +24,10 @@ while_kwd = _{"enquanto"}
 function_kwd = _{"defina a função"}
 function_call_kwd = _{"função"}
 using_kwd = _{"usando"}
+entrada = {"entrada de" ~ space ~ tipo_entrada}
+numero = {"número"}
+texto = {"texto"}
+tipo_entrada = _{numero | texto}
 
 sum_expr = {(value | ident) ~ space ~ plus ~ space ~ (value | ident)}
 
