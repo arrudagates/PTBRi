@@ -9,6 +9,12 @@ pub enum Value {
     Bool(bool),
 }
 
+#[derive(Debug, PartialEq, Clone)]
+pub enum InputType {
+    Number,
+    String,
+}
+
 impl Add for Value {
     type Output = Self;
 

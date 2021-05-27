@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, io};
 
 use crate::{AstNode, Mod, Op, Se, Value};
 
@@ -34,6 +34,21 @@ impl AstNode {
             AstNode::Val(value) => Some(value),
             AstNode::Function { .. } => None,
             AstNode::FunctionCall { .. } => None,
+            AstNode::Entrada(input_type) => {
+                let mut input = String::new();
+                io::stdin()
+                    .read_line(&mut input)
+                    .expect("Failed to read input");
+                match input_type {
+                    crate::InputType::Number => Some(Value::Float(
+                        input
+                            .trim()
+                            .parse::<f32>()
+                            .expect("Failed to parse f32 from input"),
+                    )),
+                    crate::InputType::String => Some(Value::String(input.trim().to_string())),
+                }
+            }
         }
     }
 }
@@ -177,6 +192,7 @@ pub fn interpret(
 
                 interpret(function.1.clone(), variables, functions);
             }
+            AstNode::Entrada(_) => {}
         }
     }
 }

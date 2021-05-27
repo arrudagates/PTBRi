@@ -1,0 +1,8 @@
+a é entrada de número
+b é entrada de texto
+
+mostre "entrada a: " e a
+mostre "entrada b: " e b
+
+mostre "a mais a é " e a mais a
+mostre "b mais b é " e b mais b

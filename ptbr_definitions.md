@@ -4,7 +4,7 @@ PTBR is an exotic language because it lacks common symbols used in most language
 
 ## Variable definition
 
-Variable definitions are written as Identifier followed by the keyword `é` followed by the value/expression to be assigned
+Variable definitions are written as Identifier followed by the keyword `é` followed by the value/expression/user input to be assigned
 
 Example:
 ```
@@ -143,4 +143,21 @@ a é 2
 b é 5
 
 função soma usando a e b
+```
+
+## User Input
+
+Use input is done by assigning the keyword `entrada de` followed by the type of data being entered to a variable
+
+Types of input supported:
+- número
+- texto
+
+Example:
+```
+a é entrada de número
+b é entrada de texto
+
+mostre "a é " e a
+mostre "b é " e b
 ```
