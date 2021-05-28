@@ -1,0 +1,25 @@
+defina a função fib usando n
+
+a é 2
+b é 0
+c é 1
+d é 0
+
+se n é 0
+retorne b
+até aqui
+
+enquanto a for menor ou igual a n
+d é b mais c
+b é c
+c é d
+a é a mais 1
+até aqui
+
+retorne c
+
+até aqui
+
+n é 10
+
+mostre função fib usando n

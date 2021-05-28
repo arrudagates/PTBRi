@@ -75,6 +75,10 @@ pub enum AstNode {
         ident: String,
         vars: Vec<String>,
     },
+    FunctionReturn {
+        ident: String,
+        expr: Box<AstNode>,
+    },
     IfEnd,
     Entrada(InputType),
 }
@@ -99,28 +103,29 @@ pub fn main() {
     for pair in pairs {
         match pair.as_rule() {
             Rule::line => {
-                ast.push(Box::new(build_ast_from_expr(pair)));
+                ast.push(Box::new(build_ast_from_expr(pair, None)));
             }
             _ => {}
         }
     }
     let mut variables: HashMap<String, Value> = HashMap::new();
-    let mut functions: HashMap<String, (Vec<String>, Vec<Box<AstNode>>)> = HashMap::new();
+    let mut functions: HashMap<String, (Vec<String>, Vec<Box<AstNode>>, Option<Value>)> =
+        HashMap::new();
     //println!("ast: {:#?}", ast);
     interpret(ast, &mut variables, &mut functions);
 }
 
-fn build_ast_from_expr(pair: pest::iterators::Pair<Rule>) -> AstNode {
+fn build_ast_from_expr(pair: pest::iterators::Pair<Rule>, scope: Option<String>) -> AstNode {
     match pair.as_rule() {
-        Rule::line => build_ast_from_expr(pair.into_inner().next().unwrap()),
+        Rule::line => build_ast_from_expr(pair.into_inner().next().unwrap(), scope.clone()),
         Rule::sum_expr => {
             let mut pair = pair.into_inner();
             let left = pair.next().unwrap();
             let right = pair.next().unwrap();
             AstNode::Operation {
                 op: Op::Sum,
-                left: Box::new(build_ast_from_expr(left)),
-                right: Box::new(build_ast_from_expr(right)),
+                left: Box::new(build_ast_from_expr(left, None)),
+                right: Box::new(build_ast_from_expr(right, None)),
             }
         }
         Rule::subtraction_expr => {
@@ -129,8 +134,8 @@ fn build_ast_from_expr(pair: pest::iterators::Pair<Rule>) -> AstNode {
             let right = pair.next().unwrap();
             AstNode::Operation {
                 op: Op::Sub,
-                left: Box::new(build_ast_from_expr(left)),
-                right: Box::new(build_ast_from_expr(right)),
+                left: Box::new(build_ast_from_expr(left, None)),
+                right: Box::new(build_ast_from_expr(right, None)),
             }
         }
         Rule::multiply_expr => {
@@ -139,8 +144,8 @@ fn build_ast_from_expr(pair: pest::iterators::Pair<Rule>) -> AstNode {
             let right = pair.next().unwrap();
             AstNode::Operation {
                 op: Op::Mult,
-                left: Box::new(build_ast_from_expr(left)),
-                right: Box::new(build_ast_from_expr(right)),
+                left: Box::new(build_ast_from_expr(left, None)),
+                right: Box::new(build_ast_from_expr(right, None)),
             }
         }
         Rule::divide_expr => {
@@ -149,8 +154,8 @@ fn build_ast_from_expr(pair: pest::iterators::Pair<Rule>) -> AstNode {
             let right = pair.next().unwrap();
             AstNode::Operation {
                 op: Op::Div,
-                left: Box::new(build_ast_from_expr(left)),
-                right: Box::new(build_ast_from_expr(right)),
+                left: Box::new(build_ast_from_expr(left, None)),
+                right: Box::new(build_ast_from_expr(right, None)),
             }
         }
         Rule::se => {
@@ -177,22 +182,25 @@ fn build_ast_from_expr(pair: pest::iterators::Pair<Rule>) -> AstNode {
                 } else {
                     None
                 },
-                left: Box::new(build_ast_from_expr(left)),
-                right: Box::new(build_ast_from_expr(right)),
+                left: Box::new(build_ast_from_expr(left, None)),
+                right: Box::new(build_ast_from_expr(right, None)),
                 block: pair
                     .next()
                     .unwrap()
                     .into_inner()
                     .into_iter()
-                    .map(|pair| Box::new(build_ast_from_expr(pair)))
+                    .map(|pair| Box::new(build_ast_from_expr(pair, scope.clone())))
                     .collect(),
                 senao: {
                     if let Some(senao_block) = pair.next() {
                         Some(
                             senao_block
                                 .into_inner()
+                                .next()
+                                .unwrap()
+                                .into_inner()
                                 .into_iter()
-                                .map(|pair| Box::new(build_ast_from_expr(pair)))
+                                .map(|pair| Box::new(build_ast_from_expr(pair, scope.clone())))
                                 .collect(),
                         )
                     } else {
@@ -225,14 +233,14 @@ fn build_ast_from_expr(pair: pest::iterators::Pair<Rule>) -> AstNode {
                 } else {
                     None
                 },
-                left: Box::new(build_ast_from_expr(left)),
-                right: Box::new(build_ast_from_expr(right)),
+                left: Box::new(build_ast_from_expr(left, None)),
+                right: Box::new(build_ast_from_expr(right, None)),
                 block: pair
                     .next()
                     .unwrap()
                     .into_inner()
                     .into_iter()
-                    .map(|pair| Box::new(build_ast_from_expr(pair)))
+                    .map(|pair| Box::new(build_ast_from_expr(pair, None)))
                     .collect(),
             }
         }
@@ -240,11 +248,11 @@ fn build_ast_from_expr(pair: pest::iterators::Pair<Rule>) -> AstNode {
         Rule::define_variable => {
             let mut pair = pair.into_inner();
             let ident = String::from(pair.next().unwrap().as_str());
-            let expr = Box::new(build_ast_from_expr(pair.next().unwrap()));
+            let expr = Box::new(build_ast_from_expr(pair.next().unwrap(), None));
             AstNode::Definition { ident, expr }
         }
-        Rule::value => build_ast_from_expr(pair.into_inner().next().unwrap()),
-        Rule::expression => build_ast_from_expr(pair.into_inner().next().unwrap()),
+        Rule::value => build_ast_from_expr(pair.into_inner().next().unwrap(), None),
+        Rule::expression => build_ast_from_expr(pair.into_inner().next().unwrap(), None),
         Rule::integer => AstNode::Val(Value::Integer(
             pair.as_str().parse().expect("Failed to parse i32"),
         )),
@@ -270,7 +278,7 @@ fn build_ast_from_expr(pair: pest::iterators::Pair<Rule>) -> AstNode {
         Rule::mostre => {
             let mut vec: Vec<Box<AstNode>> = Vec::new();
             for pair in pair.clone().into_inner() {
-                vec.push(Box::new(build_ast_from_expr(pair)));
+                vec.push(Box::new(build_ast_from_expr(pair, None)));
             }
             AstNode::Print(vec)
         }
@@ -278,8 +286,8 @@ fn build_ast_from_expr(pair: pest::iterators::Pair<Rule>) -> AstNode {
             let mut pair = pair.into_inner();
             let ident = String::from(pair.next().unwrap().as_str());
             let mut vars: Vec<String> = vec![];
-            if let Rule::function_signature = pair.next().unwrap().as_rule() {
-                for pair in pair.clone() {
+            if let Rule::function_signature = pair.peek().unwrap().as_rule() {
+                for pair in pair.next().unwrap().into_inner() {
                     vars.push(String::from(pair.as_str()));
                 }
             }
@@ -288,7 +296,16 @@ fn build_ast_from_expr(pair: pest::iterators::Pair<Rule>) -> AstNode {
                 .unwrap()
                 .into_inner()
                 .into_iter()
-                .map(|pair| Box::new(build_ast_from_expr(pair)))
+                .map(|pair| match pair.as_rule() {
+                    Rule::retorne => Box::new(AstNode::FunctionReturn {
+                        ident: ident.clone(),
+                        expr: Box::new(build_ast_from_expr(
+                            pair.into_inner().next().unwrap(),
+                            scope.clone(),
+                        )),
+                    }),
+                    _ => Box::new(build_ast_from_expr(pair, Some(ident.clone()))),
+                })
                 .collect();
             AstNode::Function { ident, vars, block }
         }
@@ -296,13 +313,20 @@ fn build_ast_from_expr(pair: pest::iterators::Pair<Rule>) -> AstNode {
             let mut pair = pair.into_inner();
             let ident = String::from(pair.next().unwrap().as_str());
             let mut vars: Vec<String> = vec![];
-            if let Rule::function_signature = pair.next().unwrap().as_rule() {
-                for pair in pair.clone() {
+            if let Rule::function_signature = pair.peek().unwrap().as_rule() {
+                for pair in pair.next().unwrap().into_inner() {
                     vars.push(String::from(pair.as_str()));
                 }
             }
             AstNode::FunctionCall { ident, vars }
         }
+        Rule::retorne => AstNode::FunctionReturn {
+            ident: scope.clone().expect("No scope"),
+            expr: Box::new(build_ast_from_expr(
+                pair.into_inner().next().unwrap(),
+                scope.clone(),
+            )),
+        },
         Rule::entrada => {
             let pair = pair.into_inner().next().unwrap();
             match pair.as_rule() {

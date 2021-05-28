@@ -95,4 +95,30 @@ mod tests {
             panic!("Cargo build failed");
         }
     }
+
+    #[test]
+    fn function_return() {
+        if let Ok(_) = Command::new("cargo").args(&["build", "--release"]).output() {
+            let output = Command::new("target/release/ptbri")
+                .arg("tests/function_return.ptbr")
+                .output()
+                .expect("Failed to run ptbri");
+            assert_eq!(output.stdout, "soma de  2  e  8\n10\n0\n".as_bytes())
+        } else {
+            panic!("Cargo build failed");
+        }
+    }
+
+    #[test]
+    fn fibonacci_iterative() {
+        if let Ok(_) = Command::new("cargo").args(&["build", "--release"]).output() {
+            let output = Command::new("target/release/ptbri")
+                .arg("tests/fibonacci_iterative.ptbr")
+                .output()
+                .expect("Failed to run ptbri");
+            assert_eq!(output.stdout, "55\n".as_bytes())
+        } else {
+            panic!("Cargo build failed");
+        }
+    }
 }

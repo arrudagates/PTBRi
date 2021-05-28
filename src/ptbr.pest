@@ -1,5 +1,5 @@
 ident = @{(unicode_letter | number)+}
-define_variable = {ident ~ space ~ is ~ space ~ (expression | value | entrada | ident)}
+define_variable = {ident ~ space ~ is ~ space ~ (expression | value | entrada | function_call | ident)}
 value = {number | string | boolean}
 
 plus = _{"mais"}
@@ -28,6 +28,9 @@ entrada = {"entrada de" ~ space ~ tipo_entrada}
 numero = {"número"}
 texto = {"texto"}
 tipo_entrada = _{numero | texto}
+retorne_kwd = _{"retorne"}
+
+retorne = {retorne_kwd ~ space ~ (expression | value | ident)}
 
 sum_expr = {(value | ident) ~ space ~ plus ~ space ~ (value | ident)}
 
@@ -40,14 +43,14 @@ divide_expr = {(value | ident) ~ space ~ divided ~ space ~ (value | ident)}
 expression = {sum_expr | subtraction_expr | multiply_expr | divide_expr}
 
 
-mostre = {mostre_kwd ~ space ~ ((expression | value | ident) ~ (space ~ and_kwd ~ space)+)* ~ (expression | value | ident)}
+mostre = {mostre_kwd ~ space ~ ((function_call | expression | value | ident) ~ (space ~ and_kwd ~ space)+)* ~ (function_call | expression | value | ident)}
 
 function_ident = @{ident}
 function = {function_kwd ~ space ~ function_ident ~  function_signature ~ "\n" ~ block_section ~ se_end}
 
 function_call = {function_call_kwd ~ space ~ function_ident ~ function_signature?}
 
-function_signature = {space ~ using_kwd ~ space ~ ident ~ (space ~ and_kwd ~ space ~ ident)*}
+function_signature = {space ~ using_kwd ~ space ~ (expression | value | ident) ~ (space ~ and_kwd ~ space ~ (expression | value | ident))*}
 
 se_operador = {(is_op | is_not_op) ~ (space ~ (bigger_than_eq | smaller_than_eq | bigger_than | smaller_than))?}
 
@@ -57,13 +60,13 @@ se = {se_kwd ~ space ~ (value | ident | expression) ~ space ~ se_operador ~ spac
 
 se_end = _{"até aqui"}
 
-senao = {senao_kwd ~ "\n" ~ (stmt ~ "\n"+)+ ~ se_end}
+senao = {senao_kwd ~ "\n" ~ block_section ~ se_end}
 
 enquanto = {while_kwd ~ space ~ (value | ident | expression) ~ space ~ enquanto_operador ~ space ~ (value | ident | expression) ~ "\n" ~ block_section ~ se_end}
 
-block = _{stmt ~ "\n"+}
-block_section = {block+}
-line = {define_variable | mostre | se | enquanto | function | function_call}
+block = _{(retorne | stmt) ~ "\n"*}
+block_section = {"\n"* ~ block+}
+line = {define_variable | mostre | se | enquanto | retorne | function | function_call}
 stmt = _{line}
 
 program = _{ SOI ~ "\n"* ~ (stmt ~ "\n"+) * ~ stmt? ~ EOI }

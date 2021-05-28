@@ -1,0 +1,27 @@
+defina a função soma usando a e b
+mostre "soma de " e a e " e " e b
+retorne a mais b
+até aqui
+
+a é 2
+b é 8
+
+mostre função soma usando a e b
+
+defina a função if usando c e d
+
+se c é 1
+e é c mais d
+retorne e
+até aqui
+
+senão
+retorne 0
+até aqui
+
+até aqui
+
+c é 2
+d é 3
+
+mostre função if usando c e d
