@@ -161,3 +161,26 @@ b é entrada de texto
 mostre "a é " e a
 mostre "b é " e b
 ```
+
+## Function Returns
+
+Function returns are written as the keyword `retorne` followed by the value/expression/identifier to be returned
+
+Function returns have to be inside it's respective function, because the values being returned are bound to that function's scope, but they can also be nested inside other blocks of code, like those of if statements that reside inside the function
+
+Function returns also mean that functions can now be called as values, if that function returns a value
+
+Example:
+```
+defina a função soma usando a e b
+
+retorne a mais b
+
+até aqui
+
+
+a é 2
+b é 8
+
+mostre função soma usando a e b
+```
