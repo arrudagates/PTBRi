@@ -3,7 +3,11 @@ use std::{collections::HashMap, io};
 use crate::{AstNode, Mod, Op, Se, Value};
 
 impl AstNode {
-    fn get_value(self, variables: &HashMap<String, Value>) -> Option<Value> {
+    fn get_value(
+        self,
+        mut variables: &mut HashMap<String, Value>,
+        mut functions: &mut HashMap<String, (Vec<String>, Vec<Box<AstNode>>, Option<Value>)>,
+    ) -> Option<Value> {
         match self {
             AstNode::Print(_)
             | AstNode::Definition { .. }
@@ -12,10 +16,10 @@ impl AstNode {
             | AstNode::IfEnd => None,
             AstNode::Operation { op, left, right } => {
                 let l = left
-                    .get_value(&variables)
+                    .get_value(&mut variables, &mut functions)
                     .expect("Can't get value from left");
                 let r = right
-                    .get_value(&variables)
+                    .get_value(&mut variables, &mut functions)
                     .expect("Can't get value from right");
                 Some(match op {
                     Op::Sum => l + r,
@@ -33,7 +37,12 @@ impl AstNode {
             ),
             AstNode::Val(value) => Some(value),
             AstNode::Function { .. } => None,
-            AstNode::FunctionCall { .. } => None,
+            AstNode::FunctionCall { ident, vars } => {
+                let function = functions.get(&ident).expect("Function not found");
+
+                interpret(function.clone().1, &mut variables, &mut functions.clone());
+                Some(variables.get(&ident.clone()).expect("void").to_owned())
+            }
             AstNode::Entrada(input_type) => {
                 let mut input = String::new();
                 io::stdin()
@@ -49,6 +58,7 @@ impl AstNode {
                     crate::InputType::String => Some(Value::String(input.trim().to_string())),
                 }
             }
+            AstNode::FunctionReturn { .. } => todo!(),
         }
     }
 }
@@ -62,7 +72,7 @@ macro_rules! compare {
 pub fn interpret(
     program: Vec<Box<AstNode>>,
     mut variables: &mut HashMap<String, Value>,
-    mut functions: &mut HashMap<String, (Vec<String>, Vec<Box<AstNode>>)>,
+    mut functions: &mut HashMap<String, (Vec<String>, Vec<Box<AstNode>>, Option<Value>)>,
 ) {
     let iterator = program.into_iter();
 
@@ -72,14 +82,23 @@ pub fn interpret(
                 let print_values: Vec<String> = node
                     .into_iter()
                     .map(|inner_node| {
-                        format!("{}", inner_node.get_value(&variables).expect("void"))
+                        format!(
+                            "{}",
+                            inner_node
+                                .get_value(&mut variables, &mut functions)
+                                .expect("void")
+                        )
                     })
                     .collect();
                 println!("{}", print_values.join(" "))
             }
             AstNode::Operation { .. } => {}
             AstNode::Definition { ident, expr } => {
-                variables.insert(ident, expr.get_value(&variables).expect("void"));
+                variables.insert(
+                    ident,
+                    expr.get_value(&mut variables.clone(), &mut functions)
+                        .expect("void"),
+                );
             }
             AstNode::Ident(_) => {}
             AstNode::If {
@@ -116,8 +135,14 @@ pub fn interpret(
                     }
                 };
                 if compare!(
-                    &left.clone().get_value(&variables).unwrap(),
-                    &right.clone().get_value(&variables).unwrap(),
+                    &left
+                        .clone()
+                        .get_value(&mut variables, &mut functions)
+                        .unwrap(),
+                    &right
+                        .clone()
+                        .get_value(&mut variables, &mut functions)
+                        .unwrap(),
                     comp
                 ) {
                     interpret(block, &mut variables, &mut functions);
@@ -164,8 +189,14 @@ pub fn interpret(
                 };
 
                 while compare!(
-                    &left.clone().get_value(&variables).unwrap(),
-                    &right.clone().get_value(&variables).unwrap(),
+                    &left
+                        .clone()
+                        .get_value(&mut variables, &mut functions)
+                        .unwrap(),
+                    &right
+                        .clone()
+                        .get_value(&mut variables, &mut functions)
+                        .unwrap(),
                     comp
                 ) {
                     interpret(block.clone(), &mut variables, &mut functions)
@@ -173,26 +204,21 @@ pub fn interpret(
             }
             AstNode::Val(_) => {}
             AstNode::Function { ident, vars, block } => {
-                functions.insert(ident, (vars, block));
+                functions.insert(ident, (vars, block, None));
             }
-            AstNode::FunctionCall { ident, vars } => {
+            AstNode::FunctionCall { ident, .. } => {
                 let function = functions.get(&ident).expect("Function not found");
-                let mut scope_variables: HashMap<String, Value> = HashMap::new();
-                vars.into_iter().for_each(|ident| {
-                    scope_variables
-                        .insert(
-                            ident.clone(),
-                            variables
-                                .get(&ident)
-                                .expect("Variable not found")
-                                .to_owned(),
-                        )
-                        .expect("Failed to insert variable into scope");
-                });
-
-                interpret(function.1.clone(), variables, functions);
+                interpret(function.1.clone(), variables, &mut functions);
             }
             AstNode::Entrada(_) => {}
+            AstNode::FunctionReturn { ident, expr } => {
+                variables.insert(
+                    ident.clone(),
+                    expr.clone()
+                        .get_value(&mut variables.clone(), &mut functions)
+                        .expect("void"),
+                );
+            }
         }
     }
 }
