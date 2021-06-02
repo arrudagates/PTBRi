@@ -1,0 +1,26 @@
+defina a função ack usando m e n
+
+se m é 0
+retorne n mais 1
+até aqui
+
+se m é maior que 0
+
+se n é 0
+x é função ack usando m menos 1 e 1
+retorne x
+até aqui
+
+se n é maior que 0
+z é função ack usando m e n menos 1
+y é função ack usando m menos 1 e z
+retorne y
+até aqui
+
+até aqui
+
+até aqui
+
+a é função ack usando 3 e 6
+
+mostre a

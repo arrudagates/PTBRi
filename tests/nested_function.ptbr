@@ -1,0 +1,14 @@
+defina a função soma
+mostre "1 + 2:" e função um mais função dois
+até aqui
+
+defina a função um
+retorne 1
+até aqui
+
+defina a função dois
+retorne 2
+até aqui
+
+
+função soma

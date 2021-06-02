@@ -1,0 +1,19 @@
+defina a função tower usando n e s e d e a
+
+se n é 0
+retorne 0
+até aqui
+
+função tower usando n menos 1 e s e a e d
+
+mostre "move the disk" e n e "from" e s e "to" e d
+
+função tower usando n menos 1 e a e d e s
+
+até aqui
+
+s é "S"
+d é "D"
+a é "A"
+
+função tower usando 3 e s e d e a

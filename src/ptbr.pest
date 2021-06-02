@@ -11,10 +11,18 @@ is_op = {"é"}
 is_not_op = {"não é"}
 for_op = {"for"}
 nao_for_op = {"não for"}
-bigger_than = {"maior que"}
-smaller_than = {"menor que"}
-bigger_than_eq = {"maior ou igual a"}
-smaller_than_eq = {"menor ou igual a"}
+is_comp = _{"é"}
+is_not_comp = _{"não é"}
+for_comp = _{"for"}
+nao_for_comp = _{"não for"}
+bigger_than = {(is_comp | for_comp) ~ space ~ "maior que"}
+smaller_than = {(is_comp | for_comp) ~ space ~ "menor que"}
+bigger_than_eq = {(is_comp | for_comp) ~ space ~ "maior ou igual a"}
+smaller_than_eq = {(is_comp | for_comp) ~ space ~ "menor ou igual a"}
+not_bigger_than = {(is_not_comp | nao_for_comp) ~ space ~ "maior que"}
+not_smaller_than = {(is_not_comp | nao_for_comp) ~ space ~ "menor que"}
+not_bigger_than_eq = {(is_not_comp | nao_for_comp) ~ space ~ "maior ou igual a"}
+not_smaller_than_eq = {(is_not_comp | nao_for_comp) ~ space ~ "menor ou igual a"}
 space = _{" "}
 mostre_kwd = _{"mostre"}
 and_kwd = _{"e"}
@@ -29,10 +37,12 @@ numero = {"número"}
 texto = {"texto"}
 tipo_entrada = _{numero | texto}
 retorne_kwd = _{"retorne"}
+comment_kwd = _{"comentário"}
+comment_end_kwd = _{"fim do comentário"}
 
 retorne = {retorne_kwd ~ space ~ (expression | value | ident)}
 
-sum_expr = {(value | ident) ~ space ~ plus ~ space ~ (value | ident)}
+sum_expr = {(function_call | value | ident) ~ space ~ plus ~ space ~ (function_call | value | ident)}
 
 subtraction_expr = {(value | ident) ~ space ~ minus ~ space ~ (value | ident)}
 
@@ -43,10 +53,10 @@ divide_expr = {(value | ident) ~ space ~ divided ~ space ~ (value | ident)}
 expression = {sum_expr | subtraction_expr | multiply_expr | divide_expr}
 
 
-mostre = {mostre_kwd ~ space ~ ((function_call | expression | value | ident) ~ (space ~ and_kwd ~ space)+)* ~ (function_call | expression | value | ident)}
+mostre = {mostre_kwd ~ space ~ ((expression | function_call | value | ident) ~ (space ~ and_kwd ~ space)+)* ~ (expression | function_call | value | ident)}
 
 function_ident = @{ident}
-function = {function_kwd ~ space ~ function_ident ~  function_signature ~ "\n" ~ block_section ~ se_end}
+function = {function_kwd ~ space ~ function_ident ~  function_signature? ~ "\n" ~ block_section ~ se_end}
 
 function_call = {function_call_kwd ~ space ~ function_ident ~ function_signature?}
 
@@ -54,22 +64,32 @@ function_signature = {space ~ using_kwd ~ space ~ (expression | value | ident) ~
 
 se_operador = {(is_op | is_not_op) ~ (space ~ (bigger_than_eq | smaller_than_eq | bigger_than | smaller_than))?}
 
+comp_op = _{bigger_than_eq | smaller_than_eq | bigger_than | smaller_than | not_bigger_than_eq | not_smaller_than_eq | not_bigger_than | not_smaller_than | is_not_op | is_op}
+
 enquanto_operador = {(for_op | nao_for_op) ~ (space ~ (bigger_than_eq | smaller_than_eq | bigger_than | smaller_than))?}
 
-se = {se_kwd ~ space ~ (value | ident | expression) ~ space ~ se_operador ~ space ~ (value | ident | expression) ~ "\n" ~ block_section ~ se_end ~ ("\n"+ ~ senao)?}
+se = {se_kwd ~ space ~ comp_expr ~ "\n" ~ block_section ~ se_end ~ ("\n"+ ~ senao)?}
+
+comp_expr = {(expression | value | ident) ~ space ~ comp_op ~ space ~ (expression | value | ident)}
 
 se_end = _{"até aqui"}
 
 senao = {senao_kwd ~ "\n" ~ block_section ~ se_end}
 
-enquanto = {while_kwd ~ space ~ (value | ident | expression) ~ space ~ enquanto_operador ~ space ~ (value | ident | expression) ~ "\n" ~ block_section ~ se_end}
+enquanto = {while_kwd ~ space ~ comp_expr ~ "\n" ~ block_section ~ se_end}
+
+comment_ml = _{ comment_kwd ~ (!comment_end_kwd ~ ANY)* ~ comment_end_kwd }
+comment_sl = _{ comment_kwd ~ (!(NEWLINE | EOI) ~ ANY)* ~ (NEWLINE | EOI) }
+comment = _{comment_ml | comment_sl}
+
+//list = {(expression | value | ident) ~ (space* ~ "," ~ space* ~ (expression | value | ident))*}
 
 block = _{(retorne | stmt) ~ "\n"*}
 block_section = {"\n"* ~ block+}
 line = {define_variable | mostre | se | enquanto | retorne | function | function_call}
 stmt = _{line}
 
-program = _{ SOI ~ "\n"* ~ (stmt ~ "\n"+) * ~ stmt? ~ EOI }
+program = _{ SOI ~ "\n"* ~ ((comment | stmt) ~ "\n"+) * ~ stmt? ~ EOI }
 
 verdadeiro = {"verdadeiro"}
 falso = {"falso"}
