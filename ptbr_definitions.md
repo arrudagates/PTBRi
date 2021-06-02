@@ -184,3 +184,22 @@ b é 8
 
 mostre função soma usando a e b
 ```
+
+## Comments
+
+There are two types of comments available, multi-line and single-line:
+
+Multiline-comments are surrounded by the prefix keyword `comentário` and the suffix `fim do comentário`
+
+Single-line comments are surrounded by the prefix keyword `comentário` and the end of the line
+
+Example:
+```
+comentário this is a single-line comment
+
+comentário
+this is a
+multi-line
+comment
+fim do comentário
+```

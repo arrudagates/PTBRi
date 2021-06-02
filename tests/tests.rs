@@ -22,7 +22,7 @@ mod tests {
                 .arg("tests/if_statement.ptbr")
                 .output()
                 .expect("Failed to run ptbri");
-            assert_eq!(output.stdout, "true\ntrue\ntrue\n".as_bytes())
+            assert_eq!(output.stdout, "true\ntrue\ntrue\ntrue\n".as_bytes())
         } else {
             panic!("Cargo build failed");
         }
@@ -103,7 +103,7 @@ mod tests {
                 .arg("tests/function_return.ptbr")
                 .output()
                 .expect("Failed to run ptbri");
-            assert_eq!(output.stdout, "soma de  2  e  8\n10\n0\n".as_bytes())
+            assert_eq!(output.stdout, "soma de  2  e  8\n10\n0\n10\n".as_bytes())
         } else {
             panic!("Cargo build failed");
         }
@@ -117,6 +117,71 @@ mod tests {
                 .output()
                 .expect("Failed to run ptbri");
             assert_eq!(output.stdout, "55\n".as_bytes())
+        } else {
+            panic!("Cargo build failed");
+        }
+    }
+
+    #[test]
+    fn function_recursion() {
+        if let Ok(_) = Command::new("cargo").args(&["build", "--release"]).output() {
+            let output = Command::new("target/release/ptbri")
+                .arg("tests/function_recursion.ptbr")
+                .output()
+                .expect("Failed to run ptbri");
+            assert_eq!(output.stdout, "2\n".as_bytes())
+        } else {
+            panic!("Cargo build failed");
+        }
+    }
+
+    #[test]
+    fn hanoi_towers_recursion() {
+        if let Ok(_) = Command::new("cargo").args(&["build", "--release"]).output() {
+            let output = Command::new("target/release/ptbri")
+                .arg("tests/hanoi_towers_recursion.ptbr")
+                .output()
+                .expect("Failed to run ptbri");
+            assert_eq!(output.stdout, "move the disk 1 from S to D\nmove the disk 2 from S to A\nmove the disk 1 from D to A\nmove the disk 3 from S to D\nmove the disk 1 from A to S\nmove the disk 2 from A to D\nmove the disk 1 from S to D\n".as_bytes())
+        } else {
+            panic!("Cargo build failed");
+        }
+    }
+
+    #[test]
+    fn ackermann() {
+        if let Ok(_) = Command::new("cargo").args(&["build", "--release"]).output() {
+            let output = Command::new("target/release/ptbri")
+                .arg("tests/ackermann.ptbr")
+                .output()
+                .expect("Failed to run ptbri");
+            assert_eq!(output.stdout, "509\n".as_bytes())
+        } else {
+            panic!("Cargo build failed");
+        }
+    }
+
+    #[test]
+    fn comments() {
+        if let Ok(_) = Command::new("cargo").args(&["build", "--release"]).output() {
+            let output = Command::new("target/release/ptbri")
+                .arg("tests/comments.ptbr")
+                .output()
+                .expect("Failed to run ptbri");
+            assert_eq!(output.stdout, "a é 5 e b é 10\n".as_bytes())
+        } else {
+            panic!("Cargo build failed");
+        }
+    }
+
+    #[test]
+    fn nested_function() {
+        if let Ok(_) = Command::new("cargo").args(&["build", "--release"]).output() {
+            let output = Command::new("target/release/ptbri")
+                .arg("tests/nested_function.ptbr")
+                .output()
+                .expect("Failed to run ptbri");
+            assert_eq!(output.stdout, "1 + 2: 3\n".as_bytes())
         } else {
             panic!("Cargo build failed");
         }

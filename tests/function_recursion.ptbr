@@ -1,0 +1,17 @@
+defina a função fib usando n
+
+se n é menor ou igual a 1
+retorne n
+até aqui
+
+senão
+
+x é função fib usando n menos 1
+y é função fib usando n menos 2
+
+retorne x mais y
+até aqui
+até aqui
+
+n é 3
+mostre função fib usando n

@@ -25,3 +25,18 @@ c é 2
 d é 3
 
 mostre função if usando c e d
+
+
+defina a função while usando c
+
+enquanto c for menor que 10
+c é c mais 1
+até aqui
+
+retorne c
+
+até aqui
+
+c é 0
+
+mostre função while usando c
