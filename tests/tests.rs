@@ -238,4 +238,20 @@ mod errors {
             panic!("Cargo build failed");
         }
     }
+
+    #[test]
+    fn illegal_operation() {
+        if let Ok(_) = Command::new("cargo").args(&["build", "--release"]).output() {
+            let output = Command::new("target/release/ptbri")
+                .arg("tests/errors/illegal_operation.ptbr")
+                .output()
+                .expect("Failed to run ptbri");
+            assert_eq!(
+                output.stderr,
+                "Error: Cannot perform addition, between types any and bool\n".as_bytes()
+            )
+        } else {
+            panic!("Cargo build failed");
+        }
+    }
 }

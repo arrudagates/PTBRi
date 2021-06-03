@@ -14,6 +14,8 @@ mod types;
 pub use types::*;
 mod ast;
 pub use ast::*;
+mod error;
+pub use error::*;
 
 #[derive(Parser)]
 #[grammar = "ptbr.pest"]

@@ -1,21 +1,8 @@
 use std::{cell::RefCell, collections::HashMap, io};
 
 use anyhow::Result;
-use thiserror::Error;
 
-use crate::{AstNode, Expression, InputType, Value};
-
-#[derive(Error, Debug)]
-pub enum InterpreterError {
-    #[error("Variable \"{0}\" not defined")]
-    UndefinedVariable(String),
-    #[error("Function \"{0}\" not defined")]
-    UndefinedFunction(String),
-    #[error("Couldn't parse {0} as a {1}")]
-    ParseError(String, String),
-    #[error("Function {0} expected {1} arguments but {2} {3} supplied")]
-    WrongNumberOfArgs(String, usize, usize, String),
-}
+use crate::{AstNode, Error, Expression, InputType, InterpreterError, Value};
 
 pub enum Return {
     None,
@@ -64,10 +51,7 @@ impl<'a> Scope<'a> {
         }
     }
 
-    pub fn interpret_program(
-        &self,
-        program: Vec<Box<AstNode>>,
-    ) -> Result<Return, InterpreterError> {
+    pub fn interpret_program(&self, program: Vec<Box<AstNode>>) -> Result<Return, Error> {
         let program = program.into_iter();
 
         for step in program {
@@ -79,11 +63,7 @@ impl<'a> Scope<'a> {
         Ok(Return::None)
     }
 
-    pub fn interpret_fn(
-        &self,
-        ident: String,
-        variables: Vec<Value>,
-    ) -> Result<Value, InterpreterError> {
+    pub fn interpret_fn(&self, ident: String, variables: Vec<Value>) -> Result<Value, Error> {
         let mut me = self;
         loop {
             let block = match me.functions.borrow_mut().get_mut(&ident) {
@@ -102,7 +82,8 @@ impl<'a> Scope<'a> {
                                 }
                             }
                             .to_string(),
-                        ));
+                        )
+                        .into());
                     }
 
                     let mut vars = HashMap::new();
@@ -122,33 +103,44 @@ impl<'a> Scope<'a> {
             } else if let Some(parent) = &me.parent {
                 me = &parent;
             } else {
-                return Err(InterpreterError::UndefinedFunction(ident));
+                return Err(InterpreterError::UndefinedFunction(ident).into());
             }
         }
     }
 
-    pub fn interpret_expr(&self, expr: Expression) -> Result<Value, InterpreterError> {
+    pub fn interpret_expr(&self, expr: Expression) -> Result<Value, Error> {
         macro_rules! interpret_operation {
             ($left:expr, $right:expr, $op:tt) => {
-                Value::from(self.interpret_expr($left)? $op self.interpret_expr($right)?)
+
+                self.interpret_expr($left)? $op self.interpret_expr($right)?
             }
         }
         match expr {
             Expression::Variable(ident) => match self.get_var(ident.clone()) {
                 Some(value) => Ok(value),
-                None => Err(InterpreterError::UndefinedVariable(ident)),
+                None => Err(InterpreterError::UndefinedVariable(ident).into()),
             },
             Expression::Value(value) => Ok(value),
-            Expression::Sum(left, right) => Ok(interpret_operation!(*left, *right, +)),
-            Expression::Sub(left, right) => Ok(interpret_operation!(*left, *right, -)),
-            Expression::Mult(left, right) => Ok(interpret_operation!(*left, *right, *)),
-            Expression::Div(left, right) => Ok(interpret_operation!(*left, *right, /)),
-            Expression::Is(left, right) => Ok(interpret_operation!(*left, *right, ==)),
-            Expression::IsNot(left, right) => Ok(interpret_operation!(*left, *right, !=)),
-            Expression::Smlr(left, right) => Ok(interpret_operation!(*left, *right, <)),
-            Expression::Bigr(left, right) => Ok(interpret_operation!(*left, *right, >)),
-            Expression::SmlrEq(left, right) => Ok(interpret_operation!(*left, *right, <=)),
-            Expression::BigrEq(left, right) => Ok(interpret_operation!(*left, *right, >=)),
+            Expression::Sum(left, right) => Ok(interpret_operation!(*left, *right, +)?),
+            Expression::Sub(left, right) => Ok(interpret_operation!(*left, *right, -)?),
+            Expression::Mult(left, right) => Ok(interpret_operation!(*left, *right, *)?),
+            Expression::Div(left, right) => Ok(interpret_operation!(*left, *right, /)?),
+            Expression::Is(left, right) => Ok(Value::from(interpret_operation!(*left, *right, ==))),
+            Expression::IsNot(left, right) => {
+                Ok(Value::from(interpret_operation!(*left, *right, !=)))
+            }
+            Expression::Smlr(left, right) => {
+                Ok(Value::from(interpret_operation!(*left, *right, <)))
+            }
+            Expression::Bigr(left, right) => {
+                Ok(Value::from(interpret_operation!(*left, *right, >)))
+            }
+            Expression::SmlrEq(left, right) => {
+                Ok(Value::from(interpret_operation!(*left, *right, <=)))
+            }
+            Expression::BigrEq(left, right) => {
+                Ok(Value::from(interpret_operation!(*left, *right, >=)))
+            }
             Expression::FnCall(ident, vars) => self.interpret_fn(
                 ident,
                 vars.into_iter()
@@ -157,24 +149,25 @@ impl<'a> Scope<'a> {
             ),
             Expression::Entrada(input_type) => {
                 let mut input = String::new();
-                io::stdin()
-                    .read_line(&mut input)
-                    .expect("Failed to read input");
-                match input_type {
-                    InputType::Number => match input.trim().parse::<f32>() {
-                        Ok(number) => Ok(Value::Float(number)),
-                        Err(_) => Err(InterpreterError::ParseError(
-                            input.trim().to_string(),
-                            "float".to_string(),
-                        )),
+                match io::stdin().read_line(&mut input) {
+                    Ok(_) => match input_type {
+                        InputType::Number => match input.trim().parse::<f32>() {
+                            Ok(number) => Ok(Value::Float(number)),
+                            Err(_) => Err(InterpreterError::ParseError(
+                                input.trim().to_string(),
+                                "float".to_string(),
+                            )
+                            .into()),
+                        },
+                        InputType::String => Ok(Value::String(input.trim().to_string())),
                     },
-                    InputType::String => Ok(Value::String(input.trim().to_string())),
+                    Err(_) => Err(InterpreterError::InputError.into()),
                 }
             }
         }
     }
 
-    pub fn interpret_ast(&self, ast: AstNode) -> Result<Return, InterpreterError> {
+    pub fn interpret_ast(&self, ast: AstNode) -> Result<Return, Error> {
         match ast {
             AstNode::Print(exprs) => {
                 let mut print_string = String::new();
