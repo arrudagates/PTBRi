@@ -29,12 +29,20 @@ pub fn run(program: String) -> Result<()> {
 fn build_expr(pair: pest::iterators::Pair<Rule>) -> Result<Expression, Error> {
     match pair.as_rule() {
         Rule::ident => Ok(Expression::Variable(String::from(pair.as_str()))),
-        Rule::integer => Ok(Expression::Value(Value::Integer(
-            pair.as_str().parse().expect("Failed to parse i32"),
-        ))),
-        Rule::float => Ok(Expression::Value(Value::Float(
-            pair.as_str().parse().expect("Failed to parse f32"),
-        ))),
+        Rule::integer => match pair.as_str().parse() {
+            Ok(integer) => Ok(Expression::Value(Value::Integer(integer))),
+            Err(_) => Err(ParserError::ParseError(
+                pair.as_str().to_string(),
+                "integer".to_string(),
+            )
+            .into()),
+        },
+        Rule::float => match pair.as_str().parse() {
+            Ok(float) => Ok(Expression::Value(Value::Float(float))),
+            Err(_) => {
+                Err(ParserError::ParseError(pair.as_str().to_string(), "float".to_string()).into())
+            }
+        },
         Rule::string => Ok(Expression::Value(Value::String(String::from(
             pair.as_str()
                 .strip_prefix("\"")
@@ -48,9 +56,22 @@ fn build_expr(pair: pest::iterators::Pair<Rule>) -> Result<Expression, Error> {
         Rule::falso => Ok(Expression::Value(Value::Bool(false))),
 
         Rule::sum_expr => {
+            let expr = pair.clone().as_str();
             let mut pair = pair.into_inner();
-            let left = pair.next().unwrap();
-            let right = pair.next().unwrap();
+            let left = match pair.next() {
+                Some(left) => Ok(left),
+                None => Err(ParserError::IncompleteExpr(
+                    expr.to_string(),
+                    "left".to_string(),
+                )),
+            }?;
+            let right = match pair.next() {
+                Some(right) => Ok(right),
+                None => Err(ParserError::IncompleteExpr(
+                    expr.to_string(),
+                    "right".to_string(),
+                )),
+            }?;
             Ok(Expression::Sum(
                 Box::new(build_expr(left)?),
                 Box::new(build_expr(right)?),
@@ -58,9 +79,22 @@ fn build_expr(pair: pest::iterators::Pair<Rule>) -> Result<Expression, Error> {
         }
 
         Rule::subtraction_expr => {
+            let expr = pair.clone().as_str();
             let mut pair = pair.into_inner();
-            let left = pair.next().unwrap();
-            let right = pair.next().unwrap();
+            let left = match pair.next() {
+                Some(left) => Ok(left),
+                None => Err(ParserError::IncompleteExpr(
+                    expr.to_string(),
+                    "left".to_string(),
+                )),
+            }?;
+            let right = match pair.next() {
+                Some(right) => Ok(right),
+                None => Err(ParserError::IncompleteExpr(
+                    expr.to_string(),
+                    "right".to_string(),
+                )),
+            }?;
             Ok(Expression::Sub(
                 Box::new(build_expr(left)?),
                 Box::new(build_expr(right)?),
@@ -68,9 +102,22 @@ fn build_expr(pair: pest::iterators::Pair<Rule>) -> Result<Expression, Error> {
         }
 
         Rule::multiply_expr => {
+            let expr = pair.clone().as_str();
             let mut pair = pair.into_inner();
-            let left = pair.next().unwrap();
-            let right = pair.next().unwrap();
+            let left = match pair.next() {
+                Some(left) => Ok(left),
+                None => Err(ParserError::IncompleteExpr(
+                    expr.to_string(),
+                    "left".to_string(),
+                )),
+            }?;
+            let right = match pair.next() {
+                Some(right) => Ok(right),
+                None => Err(ParserError::IncompleteExpr(
+                    expr.to_string(),
+                    "right".to_string(),
+                )),
+            }?;
             Ok(Expression::Mult(
                 Box::new(build_expr(left)?),
                 Box::new(build_expr(right)?),
@@ -78,9 +125,22 @@ fn build_expr(pair: pest::iterators::Pair<Rule>) -> Result<Expression, Error> {
         }
 
         Rule::divide_expr => {
+            let expr = pair.clone().as_str();
             let mut pair = pair.into_inner();
-            let left = pair.next().unwrap();
-            let right = pair.next().unwrap();
+            let left = match pair.next() {
+                Some(left) => Ok(left),
+                None => Err(ParserError::IncompleteExpr(
+                    expr.to_string(),
+                    "left".to_string(),
+                )),
+            }?;
+            let right = match pair.next() {
+                Some(right) => Ok(right),
+                None => Err(ParserError::IncompleteExpr(
+                    expr.to_string(),
+                    "right".to_string(),
+                )),
+            }?;
             Ok(Expression::Div(
                 Box::new(build_expr(left)?),
                 Box::new(build_expr(right)?),
@@ -88,8 +148,15 @@ fn build_expr(pair: pest::iterators::Pair<Rule>) -> Result<Expression, Error> {
         }
 
         Rule::function_call => {
+            let expr = pair.clone().as_str();
             let mut pair = pair.into_inner();
-            let ident = String::from(pair.next().unwrap().as_str());
+            let ident = String::from(match pair.next() {
+                Some(pair) => Ok(pair.as_str()),
+                None => Err(ParserError::IncompleteFnCall(
+                    expr.to_string(),
+                    "identifier".to_string(),
+                )),
+            }?);
             let mut vars: Vec<Expression> = vec![];
             if let Some(signature_pair) = pair.peek() {
                 if let Rule::function_signature = signature_pair.as_rule() {
@@ -106,10 +173,29 @@ fn build_expr(pair: pest::iterators::Pair<Rule>) -> Result<Expression, Error> {
         Rule::entrada_texto => Ok(Expression::Entrada(InputType::String)),
 
         Rule::comp_expr => {
+            let expr = pair.clone().as_str();
             let mut pair = pair.into_inner();
-            let left = Box::new(build_expr(pair.next().unwrap())?);
-            let op = pair.next().unwrap();
-            let right = Box::new(build_expr(pair.next().unwrap())?);
+            let left = Box::new(build_expr(match pair.next() {
+                Some(left) => Ok(left),
+                None => Err(ParserError::IncompleteExpr(
+                    expr.to_string(),
+                    "left".to_string(),
+                )),
+            }?)?);
+            let op = match pair.next() {
+                Some(op) => Ok(op),
+                None => Err(ParserError::IncompleteExpr(
+                    expr.to_string(),
+                    "operator".to_string(),
+                )),
+            }?;
+            let right = Box::new(build_expr(match pair.next() {
+                Some(right) => Ok(right),
+                None => Err(ParserError::IncompleteExpr(
+                    expr.to_string(),
+                    "right".to_string(),
+                )),
+            }?)?);
             match op.as_rule() {
                 Rule::is_op | Rule::for_op => Ok(Expression::Is(left, right)),
                 Rule::is_not_op | Rule::nao_for_op => Ok(Expression::IsNot(left, right)),
@@ -121,7 +207,7 @@ fn build_expr(pair: pest::iterators::Pair<Rule>) -> Result<Expression, Error> {
                 Rule::smaller_than_eq | Rule::not_bigger_than => {
                     Ok(Expression::SmlrEq(left, right))
                 }
-                _ => panic!("Only operators accepted for se are 'é' and 'não é'"),
+                _ => Err(ParserError::UnsupportedOperator(op.as_str().to_string()).into()),
             }
         }
 

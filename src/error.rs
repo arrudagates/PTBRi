@@ -65,4 +65,12 @@ pub enum ParserError {
     NotAnExpression(String),
     #[error("Incorrect syntax:\n{0}")]
     NotAST(String),
+    #[error("Couldn't parse {0} as a {1}")]
+    ParseError(String, String),
+    #[error("Expression {0} missing {1} value")]
+    IncompleteExpr(String, String),
+    #[error("Function call {0} missing {1}")]
+    IncompleteFnCall(String, String),
+    #[error("Operator {0} is not supported")]
+    UnsupportedOperator(String),
 }
