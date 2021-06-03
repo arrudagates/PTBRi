@@ -187,3 +187,103 @@ mod tests {
         }
     }
 }
+
+mod errors {
+    use std::process::Command;
+
+    #[test]
+    fn undefined_var() {
+        if let Ok(_) = Command::new("cargo").args(&["build", "--release"]).output() {
+            let output = Command::new("target/release/ptbri")
+                .arg("tests/errors/undefined_var.ptbr")
+                .output()
+                .expect("Failed to run ptbri");
+            assert_eq!(
+                output.stderr,
+                "Error: Variable \"a\" not defined\n".as_bytes()
+            )
+        } else {
+            panic!("Cargo build failed");
+        }
+    }
+
+    #[test]
+    fn undefined_function() {
+        if let Ok(_) = Command::new("cargo").args(&["build", "--release"]).output() {
+            let output = Command::new("target/release/ptbri")
+                .arg("tests/errors/undefined_function.ptbr")
+                .output()
+                .expect("Failed to run ptbri");
+            assert_eq!(
+                output.stderr,
+                "Error: Function \"teste\" not defined\n".as_bytes()
+            )
+        } else {
+            panic!("Cargo build failed");
+        }
+    }
+
+    #[test]
+    fn not_enough_args() {
+        if let Ok(_) = Command::new("cargo").args(&["build", "--release"]).output() {
+            let output = Command::new("target/release/ptbri")
+                .arg("tests/errors/not_enough_args.ptbr")
+                .output()
+                .expect("Failed to run ptbri");
+            assert_eq!(
+                output.stderr,
+                "Error: Function teste expected 2 arguments but 1 was supplied\n".as_bytes()
+            )
+        } else {
+            panic!("Cargo build failed");
+        }
+    }
+
+    #[test]
+    fn illegal_operation() {
+        if let Ok(_) = Command::new("cargo").args(&["build", "--release"]).output() {
+            let output = Command::new("target/release/ptbri")
+                .arg("tests/errors/illegal_operation.ptbr")
+                .output()
+                .expect("Failed to run ptbri");
+            assert_eq!(
+                output.stderr,
+                "Error: Cannot perform addition, between types any and bool\n".as_bytes()
+            )
+        } else {
+            panic!("Cargo build failed");
+        }
+    }
+
+    #[test]
+    fn pest_parse_error() {
+        if let Ok(_) = Command::new("cargo").args(&["build", "--release"]).output() {
+            let output = Command::new("target/release/ptbri")
+                .arg("tests/errors/pest_parse_error.ptbr")
+                .output()
+                .expect("Failed to run ptbri");
+            assert_eq!(
+                output.stderr,
+                "Error: Parsing failed, reason:\n --> 1:1\n  |\n1 | mostr a mais a\n  | ^---\n  |\n  = expected EOI or line\n".as_bytes()
+            )
+        } else {
+            panic!("Cargo build failed");
+        }
+    }
+
+    #[test]
+    fn incomplete_expression() {
+        if let Ok(_) = Command::new("cargo").args(&["build", "--release"]).output() {
+            let output = Command::new("target/release/ptbri")
+                .arg("tests/errors/incomplete_expression.ptbr")
+                .output()
+                .expect("Failed to run ptbri");
+            assert_eq!(
+                output.stderr,
+                "Error: Parsing failed, reason:\n --> 1:15\n  |\n1 | mostre 1 mais \n  |               ^---\n  |\n  = expected ident, function_call, verdadeiro, falso, integer, float, or string\n".as_bytes()
+            )
+        } else {
+            panic!("Cargo build failed");
+        }
+    }
+}
