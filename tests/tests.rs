@@ -187,3 +187,39 @@ mod tests {
         }
     }
 }
+
+mod errors {
+    use std::process::Command;
+
+    #[test]
+    fn undefined_var() {
+        if let Ok(_) = Command::new("cargo").args(&["build", "--release"]).output() {
+            let output = Command::new("target/release/ptbri")
+                .arg("tests/errors/undefined_var.ptbr")
+                .output()
+                .expect("Failed to run ptbri");
+            assert_eq!(
+                output.stderr,
+                "Error: Variable \"a\" not defined\n".as_bytes()
+            )
+        } else {
+            panic!("Cargo build failed");
+        }
+    }
+
+    #[test]
+    fn not_enough_args() {
+        if let Ok(_) = Command::new("cargo").args(&["build", "--release"]).output() {
+            let output = Command::new("target/release/ptbri")
+                .arg("tests/errors/not_enough_args.ptbr")
+                .output()
+                .expect("Failed to run ptbri");
+            assert_eq!(
+                output.stderr,
+                "Error: Function teste expected 2 arguments but 1 was supplied\n".as_bytes()
+            )
+        } else {
+            panic!("Cargo build failed");
+        }
+    }
+}

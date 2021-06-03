@@ -1,5 +1,7 @@
 use std::{env::args, fs};
 
+use anyhow::Result;
+
 extern crate pest;
 #[macro_use]
 extern crate pest_derive;
@@ -17,7 +19,7 @@ pub use ast::*;
 #[grammar = "ptbr.pest"]
 struct PTBRParser;
 
-pub fn main() {
+pub fn main() -> Result<()> {
     let mut program = String::new();
 
     let args: Vec<String> = args().collect();
@@ -31,10 +33,10 @@ pub fn main() {
         }
     }
 
-    run(program);
+    run(program)
 }
 
-pub fn run(program: String) {
+pub fn run(program: String) -> Result<()> {
     let mut ast = vec![];
 
     let pairs = PTBRParser::parse(Rule::program, &program).expect("Failed to parse");
@@ -46,7 +48,8 @@ pub fn run(program: String) {
             _ => {}
         }
     }
-    Scope::new().interpret_program(ast);
+    Scope::new().interpret_program(ast)?;
+    Ok(())
 }
 
 fn build_expr(pair: pest::iterators::Pair<Rule>) -> Expression {
