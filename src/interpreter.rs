@@ -9,6 +9,8 @@ use crate::{AstNode, Expression, InputType, Value};
 pub enum InterpreterError {
     #[error("Variable \"{0}\" not defined")]
     UndefinedVariable(String),
+    #[error("Function \"{0}\" not defined")]
+    UndefinedFunction(String),
     #[error("Couldn't parse {0} as a {1}")]
     ParseError(String, String),
     #[error("Function {0} expected {1} arguments but {2} {3} supplied")]
@@ -120,7 +122,7 @@ impl<'a> Scope<'a> {
             } else if let Some(parent) = &me.parent {
                 me = &parent;
             } else {
-                panic!("Function not defined");
+                return Err(InterpreterError::UndefinedFunction(ident));
             }
         }
     }

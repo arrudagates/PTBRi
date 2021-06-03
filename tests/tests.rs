@@ -208,6 +208,22 @@ mod errors {
     }
 
     #[test]
+    fn undefined_function() {
+        if let Ok(_) = Command::new("cargo").args(&["build", "--release"]).output() {
+            let output = Command::new("target/release/ptbri")
+                .arg("tests/errors/undefined_function.ptbr")
+                .output()
+                .expect("Failed to run ptbri");
+            assert_eq!(
+                output.stderr,
+                "Error: Function \"teste\" not defined\n".as_bytes()
+            )
+        } else {
+            panic!("Cargo build failed");
+        }
+    }
+
+    #[test]
     fn not_enough_args() {
         if let Ok(_) = Command::new("cargo").args(&["build", "--release"]).output() {
             let output = Command::new("target/release/ptbri")
