@@ -44,11 +44,7 @@ fn build_expr(pair: pest::iterators::Pair<Rule>) -> Result<Expression, Error> {
             }
         },
         Rule::string => Ok(Expression::Value(Value::String(String::from(
-            pair.as_str()
-                .strip_prefix("\"")
-                .expect("prefix not present")
-                .strip_suffix("\"")
-                .expect("suffix not present"),
+            pair.into_inner().as_str(),
         )))),
 
         Rule::verdadeiro => Ok(Expression::Value(Value::Bool(true))),
