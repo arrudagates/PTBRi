@@ -1,6 +1,6 @@
 ident = @{(unicode_letter | number)+}
 define_variable = {ident ~ space ~ is ~ space ~ (expression | value | entrada | function_call | ident)}
-value = {number | string | boolean}
+value = _{number | string | boolean}
 
 plus = _{"mais"}
 minus = _{"menos"}
@@ -32,10 +32,10 @@ while_kwd = _{"enquanto"}
 function_kwd = _{"defina a função"}
 function_call_kwd = _{"função"}
 using_kwd = _{"usando"}
-entrada = {"entrada de" ~ space ~ tipo_entrada}
-numero = {"número"}
-texto = {"texto"}
-tipo_entrada = _{numero | texto}
+entrada = _{"entrada de" ~ space ~ tipo_entrada}
+entrada_numero = {"número"}
+entrada_texto = {"texto"}
+tipo_entrada = _{entrada_numero | entrada_texto}
 retorne_kwd = _{"retorne"}
 comment_kwd = _{"comentário"}
 comment_end_kwd = _{"fim do comentário"}
@@ -50,7 +50,7 @@ multiply_expr = {(value | ident) ~ space ~ times ~ space ~ (value | ident)}
 
 divide_expr = {(value | ident) ~ space ~ divided ~ space ~ (value | ident)}
 
-expression = {sum_expr | subtraction_expr | multiply_expr | divide_expr}
+expression = _{sum_expr | subtraction_expr | multiply_expr | divide_expr}
 
 
 mostre = {mostre_kwd ~ space ~ ((expression | function_call | value | ident) ~ (space ~ and_kwd ~ space)+)* ~ (expression | function_call | value | ident)}
@@ -93,7 +93,7 @@ program = _{ SOI ~ "\n"* ~ ((comment | stmt) ~ "\n"+) * ~ stmt? ~ EOI }
 
 verdadeiro = {"verdadeiro"}
 falso = {"falso"}
-boolean = {verdadeiro | falso}
+boolean = _{verdadeiro | falso}
 
 integer = { "-"? ~ ASCII_DIGIT+ }
 

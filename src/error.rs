@@ -6,6 +6,7 @@ use thiserror::Error;
 pub enum Error {
     InterpreterError(InterpreterError),
     TypeError(TypeError),
+    ParserError(ParserError),
 }
 
 impl Display for Error {
@@ -13,6 +14,7 @@ impl Display for Error {
         match self {
             Error::InterpreterError(error) => write!(f, "{}", error),
             Error::TypeError(error) => write!(f, "{}", error),
+            Error::ParserError(error) => write!(f, "{}", error),
         }
     }
 }
@@ -26,6 +28,12 @@ impl From<InterpreterError> for Error {
 impl From<TypeError> for Error {
     fn from(error: TypeError) -> Self {
         Self::TypeError(error)
+    }
+}
+
+impl From<ParserError> for Error {
+    fn from(error: ParserError) -> Self {
+        Self::ParserError(error)
     }
 }
 
@@ -47,4 +55,14 @@ pub enum InterpreterError {
 pub enum TypeError {
     #[error("Cannot perform {0}, between types {1} and {2}")]
     IllegalOperation(String, String, String),
+}
+
+#[derive(Error, Debug)]
+pub enum ParserError {
+    #[error("Parsing failed, reason:\n{0}")]
+    PestError(String),
+    #[error("Not an expression:\n{0}")]
+    NotAnExpression(String),
+    #[error("Incorrect syntax:\n{0}")]
+    NotAST(String),
 }

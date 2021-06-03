@@ -125,22 +125,12 @@ impl<'a> Scope<'a> {
             Expression::Sub(left, right) => Ok(interpret_operation!(*left, *right, -)?),
             Expression::Mult(left, right) => Ok(interpret_operation!(*left, *right, *)?),
             Expression::Div(left, right) => Ok(interpret_operation!(*left, *right, /)?),
-            Expression::Is(left, right) => Ok(Value::from(interpret_operation!(*left, *right, ==))),
-            Expression::IsNot(left, right) => {
-                Ok(Value::from(interpret_operation!(*left, *right, !=)))
-            }
-            Expression::Smlr(left, right) => {
-                Ok(Value::from(interpret_operation!(*left, *right, <)))
-            }
-            Expression::Bigr(left, right) => {
-                Ok(Value::from(interpret_operation!(*left, *right, >)))
-            }
-            Expression::SmlrEq(left, right) => {
-                Ok(Value::from(interpret_operation!(*left, *right, <=)))
-            }
-            Expression::BigrEq(left, right) => {
-                Ok(Value::from(interpret_operation!(*left, *right, >=)))
-            }
+            Expression::Is(left, right) => Ok(interpret_operation!(*left, *right, ==).into()),
+            Expression::IsNot(left, right) => Ok(interpret_operation!(*left, *right, !=).into()),
+            Expression::Smlr(left, right) => Ok(interpret_operation!(*left, *right, <).into()),
+            Expression::Bigr(left, right) => Ok(interpret_operation!(*left, *right, >).into()),
+            Expression::SmlrEq(left, right) => Ok(interpret_operation!(*left, *right, <=).into()),
+            Expression::BigrEq(left, right) => Ok(interpret_operation!(*left, *right, >=).into()),
             Expression::FnCall(ident, vars) => self.interpret_fn(
                 ident,
                 vars.into_iter()
