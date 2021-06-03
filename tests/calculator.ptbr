@@ -1,0 +1,56 @@
+defina a função soma usando esquerda e direita
+retorne esquerda mais direita
+até aqui
+
+defina a função subtração usando esquerda e direita
+retorne esquerda menos direita
+até aqui
+
+defina a função multiplicação usando esquerda e direita
+retorne esquerda vezes direita
+até aqui
+
+defina a função divisão usando esquerda e direita
+retorne esquerda dividido por direita
+até aqui
+
+a é 0
+
+mostre "Bem vindo à calculadora escrita em PTBR!"
+
+enquanto a for 0
+
+mostre "Digite a operação (+, -, *, /, sair):"
+op é entrada de texto
+
+se op é "sair"
+a é 1
+até aqui
+
+senão
+
+mostre "Digite o valor da esquerda:"
+esquerda é entrada de número
+
+mostre "Digite o valor da direita:"
+direita é entrada de número
+
+se op é "+"
+mostre "Resultado:" e função soma usando esquerda e direita
+até aqui
+
+se op é "-"
+mostre "Resultado:" e função subtração usando esquerda e direita
+até aqui
+
+se op é "*"
+mostre "Resultado:" e função multiplicação usando esquerda e direita
+até aqui
+
+se op é "/"
+mostre "Resultado:" e função divisão usando esquerda e direita
+até aqui
+
+até aqui
+
+até aqui

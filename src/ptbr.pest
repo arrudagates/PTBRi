@@ -64,7 +64,7 @@ function_signature = {space ~ using_kwd ~ space ~ (expression | value | ident) ~
 
 se_operador = {(is_op | is_not_op) ~ (space ~ (bigger_than_eq | smaller_than_eq | bigger_than | smaller_than))?}
 
-comp_op = _{bigger_than_eq | smaller_than_eq | bigger_than | smaller_than | not_bigger_than_eq | not_smaller_than_eq | not_bigger_than | not_smaller_than | is_not_op | is_op}
+comp_op = _{bigger_than_eq | smaller_than_eq | bigger_than | smaller_than | not_bigger_than_eq | not_smaller_than_eq | not_bigger_than | not_smaller_than | is_not_op | is_op | for_op | nao_for_op}
 
 enquanto_operador = {(for_op | nao_for_op) ~ (space ~ (bigger_than_eq | smaller_than_eq | bigger_than | smaller_than))?}
 
