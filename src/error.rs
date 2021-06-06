@@ -19,23 +19,19 @@ impl Display for Error {
     }
 }
 
-impl From<InterpreterError> for Error {
-    fn from(error: InterpreterError) -> Self {
-        Self::InterpreterError(error)
-    }
+macro_rules! impl_error {
+    ($($type:ident),*) => {
+        $(
+        impl From<$type> for Error {
+            fn from(error: $type) -> Self {
+                Self::$type(error)
+            }
+        }
+            )*
+    };
 }
 
-impl From<TypeError> for Error {
-    fn from(error: TypeError) -> Self {
-        Self::TypeError(error)
-    }
-}
-
-impl From<ParserError> for Error {
-    fn from(error: ParserError) -> Self {
-        Self::ParserError(error)
-    }
-}
+impl_error!(InterpreterError, TypeError, ParserError);
 
 #[derive(Error, Debug)]
 pub enum InterpreterError {
