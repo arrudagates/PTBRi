@@ -286,4 +286,20 @@ mod errors {
             panic!("Cargo build failed");
         }
     }
+
+    #[test]
+    fn infinite_recursion() {
+        if let Ok(_) = Command::new("cargo").args(&["build", "--release"]).output() {
+            let output = Command::new("target/release/ptbri")
+                .arg("tests/errors/infinite_recursion.ptbr")
+                .output()
+                .expect("Failed to run ptbri");
+            assert_eq!(
+                output.stderr,
+                "Error: Reached recursion limit of 4000\n".as_bytes()
+            )
+        } else {
+            panic!("Cargo build failed");
+        }
+    }
 }
