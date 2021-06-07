@@ -14,6 +14,8 @@ pub enum Expression {
     Bigr(Box<Expression>, Box<Expression>),
     SmlrEq(Box<Expression>, Box<Expression>),
     BigrEq(Box<Expression>, Box<Expression>),
+    And(Box<Expression>, Box<Expression>),
+    Or(Box<Expression>, Box<Expression>),
     FnCall(String, Vec<Expression>),
     Entrada(InputType),
 }

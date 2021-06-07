@@ -50,6 +50,9 @@ multiply_expr = {(value | ident) ~ space ~ times ~ space ~ (value | ident)}
 
 divide_expr = {(value | ident) ~ space ~ divided ~ space ~ (value | ident)}
 
+and_expr = {comp_expr ~ " e " ~ comp_expr}
+or_expr = {comp_expr ~ " ou " ~ comp_expr}
+
 expression = _{sum_expr | subtraction_expr | multiply_expr | divide_expr}
 
 
@@ -68,7 +71,7 @@ comp_op = _{bigger_than_eq | smaller_than_eq | bigger_than | smaller_than | not_
 
 enquanto_operador = {(for_op | nao_for_op) ~ (space ~ (bigger_than_eq | smaller_than_eq | bigger_than | smaller_than))?}
 
-se = {se_kwd ~ space ~ comp_expr ~ "\n" ~ block_section ~ se_end ~ ("\n"+ ~ senao)?}
+se = {se_kwd ~ space ~ (and_expr | or_expr | comp_expr) ~ "\n" ~ block_section ~ se_end ~ ("\n"+ ~ senao)?}
 
 comp_expr = {(expression | value | ident) ~ space ~ comp_op ~ space ~ (expression | value | ident)}
 
@@ -76,7 +79,7 @@ se_end = _{"até aqui"}
 
 senao = {senao_kwd ~ "\n" ~ block_section ~ se_end}
 
-enquanto = {while_kwd ~ space ~ comp_expr ~ "\n" ~ block_section ~ se_end}
+enquanto = {while_kwd ~ space ~ (and_expr | or_expr | comp_expr) ~ "\n" ~ block_section ~ se_end}
 
 comment_ml = _{ comment_kwd ~ (!comment_end_kwd ~ ANY)* ~ comment_end_kwd }
 comment_sl = _{ comment_kwd ~ (!(NEWLINE | EOI) ~ ANY)* ~ (NEWLINE | EOI) }
