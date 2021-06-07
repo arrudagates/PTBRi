@@ -1,6 +1,6 @@
 use anyhow::Result;
 
-use crate::{AstNode, Error, Expression, InputType, ParserError, Scope, Value};
+use crate::{AstNode, Error, Expression, Global, InputType, ParserError, Scope, Value};
 
 use pest::Parser;
 
@@ -22,7 +22,7 @@ pub fn run(program: String) -> Result<()> {
             _ => {}
         }
     }
-    Scope::new().interpret_program(ast)?;
+    Scope::new().interpret_program(ast, &mut Global::default())?;
     Ok(())
 }
 

@@ -49,6 +49,8 @@ pub enum InterpreterError {
     WrongNumberOfArgs(String, usize, usize, String),
     #[error("Failed to read input")]
     InputError,
+    #[error("Reached recursion limit of {0}")]
+    RecursionLimit(usize),
 }
 
 #[derive(Error, Debug)]
