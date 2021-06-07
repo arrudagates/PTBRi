@@ -60,6 +60,8 @@ Valid comparison modifiers are:
 - maior ou igual a
 - menor ou igual a
 
+You can also add logical conditions for the comparisons by placing one on each side of either `e` (and) or `ou` (or)
+
 Example:
 ```
 se a é 1
@@ -70,6 +72,9 @@ se a não é maior que 1
 se a não é menor que 1
 se a é maior ou igual a 1
 se a é menor ou igual a 1
+
+se a é 1 e b é 2
+se a é 1 ou b é 2
 ```
 
 ## Else
@@ -105,12 +110,17 @@ Valid comparison modifiers are:
 - maior ou igual a
 - menor ou igual a
 
+You can also add logical conditions for the comparisons by placing one on each side of either `e` (and) or `ou` (or)
+
 Example:
 ```
 enquanto a for 1
 enquanto a não for 1
 enquanto a for maior que 1
 enquanto a não for menor ou igual a 1
+
+enquanto a for 1 e b for 2
+enquanto a for 1 ou b for 2
 ```
 
 ## Function Definition
