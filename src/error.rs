@@ -53,6 +53,8 @@ pub enum InterpreterError {
 pub enum TypeError {
     #[error("Cannot perform {0}, between types {1} and {2}")]
     IllegalOperation(String, String, String),
+    #[error("Cannot treat {0} as a Bool type")]
+    ToBoolError(String),
 }
 
 #[derive(Error, Debug)]

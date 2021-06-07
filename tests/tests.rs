@@ -186,6 +186,19 @@ mod tests {
             panic!("Cargo build failed");
         }
     }
+
+    #[test]
+    fn and_or() {
+        if let Ok(_) = Command::new("cargo").args(&["build", "--release"]).output() {
+            let output = Command::new("target/release/ptbri")
+                .arg("tests/and_or.ptbr")
+                .output()
+                .expect("Failed to run ptbri");
+            assert_eq!(output.stdout, "true\ntrue\ntrue\n".as_bytes())
+        } else {
+            panic!("Cargo build failed");
+        }
+    }
 }
 
 mod errors {

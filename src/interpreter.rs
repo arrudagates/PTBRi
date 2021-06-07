@@ -1,8 +1,8 @@
-use std::{cell::RefCell, collections::HashMap, io};
+use std::{cell::RefCell, collections::HashMap, convert::TryFrom, io};
 
 use anyhow::Result;
 
-use crate::{AstNode, Error, Expression, InputType, InterpreterError, Value};
+use crate::{AstNode, Error, Expression, InputType, InterpreterError, TypeError, Value};
 
 pub enum Return {
     None,
@@ -35,6 +35,20 @@ impl Default for Global {
             recursion_limit: 4000,
             #[cfg(debug_assertions)]
             recursion_limit: 200,
+        }
+    }
+}
+
+impl TryFrom<Value> for bool {
+    type Error = Error;
+
+    fn try_from(value: Value) -> Result<Self, Error> {
+        match value {
+            Value::Void => Err(TypeError::ToBoolError("Void".into()).into()),
+            Value::String(_) => Err(TypeError::ToBoolError("String".into()).into()),
+            Value::Integer(_) => Err(TypeError::ToBoolError("Integer".into()).into()),
+            Value::Float(_) => Err(TypeError::ToBoolError("Float".into()).into()),
+            Value::Bool(boolean) => Ok(boolean),
         }
     }
 }
@@ -154,6 +168,14 @@ impl<'a> Scope<'a> {
                 self.interpret_expr($left, global)? $op self.interpret_expr($right, global)?
             }
         }
+
+        macro_rules! interpret_bool {
+            ($left:expr, $right:expr, $op:tt) => {
+
+                bool::try_from(self.interpret_expr($left, global)?)? $op bool::try_from(self.interpret_expr($right, global)?)?
+            }
+        }
+
         match expr {
             Expression::Variable(ident) => match self.get_var(ident.clone()) {
                 Some(value) => Ok(value),
@@ -170,6 +192,8 @@ impl<'a> Scope<'a> {
             Expression::Bigr(left, right) => Ok(interpret_operation!(*left, *right, >).into()),
             Expression::SmlrEq(left, right) => Ok(interpret_operation!(*left, *right, <=).into()),
             Expression::BigrEq(left, right) => Ok(interpret_operation!(*left, *right, >=).into()),
+            Expression::And(left, right) => Ok(interpret_bool!(*left, *right, &&).into()),
+            Expression::Or(left, right) => Ok(interpret_bool!(*left, *right, ||).into()),
             Expression::FnCall(ident, vars) => self.interpret_fn(
                 ident,
                 vars.into_iter()

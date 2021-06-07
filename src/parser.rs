@@ -143,6 +143,52 @@ fn build_expr(pair: pest::iterators::Pair<Rule>) -> Result<Expression, Error> {
             ))
         }
 
+        Rule::and_expr => {
+            let expr = pair.clone().as_str();
+            let mut pair = pair.into_inner();
+            let left = match pair.next() {
+                Some(left) => Ok(left),
+                None => Err(ParserError::IncompleteExpr(
+                    expr.to_string(),
+                    "left".to_string(),
+                )),
+            }?;
+            let right = match pair.next() {
+                Some(right) => Ok(right),
+                None => Err(ParserError::IncompleteExpr(
+                    expr.to_string(),
+                    "right".to_string(),
+                )),
+            }?;
+            Ok(Expression::And(
+                Box::new(build_expr(left)?),
+                Box::new(build_expr(right)?),
+            ))
+        }
+
+        Rule::or_expr => {
+            let expr = pair.clone().as_str();
+            let mut pair = pair.into_inner();
+            let left = match pair.next() {
+                Some(left) => Ok(left),
+                None => Err(ParserError::IncompleteExpr(
+                    expr.to_string(),
+                    "left".to_string(),
+                )),
+            }?;
+            let right = match pair.next() {
+                Some(right) => Ok(right),
+                None => Err(ParserError::IncompleteExpr(
+                    expr.to_string(),
+                    "right".to_string(),
+                )),
+            }?;
+            Ok(Expression::Or(
+                Box::new(build_expr(left)?),
+                Box::new(build_expr(right)?),
+            ))
+        }
+
         Rule::function_call => {
             let expr = pair.clone().as_str();
             let mut pair = pair.into_inner();
