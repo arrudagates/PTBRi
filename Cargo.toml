@@ -10,6 +10,7 @@ anyhow = "1.0.40"
 pest = "2.1.3"
 pest_derive = "2.1.0"
 thiserror = "1.0.25"
+yew = "0.18"
 
 
 [dev-dependencies]

@@ -8,7 +8,7 @@ use pest::Parser;
 #[grammar = "ptbr.pest"]
 struct PTBRParser;
 
-pub fn run(program: String) -> Result<()> {
+pub fn run_code(program: String, output: &mut String) -> Result<()> {
     let mut ast = vec![];
 
     for pair in match PTBRParser::parse(Rule::program, &program) {
@@ -22,7 +22,7 @@ pub fn run(program: String) -> Result<()> {
             _ => {}
         }
     }
-    Scope::new().interpret_program(ast, &mut Global::default())?;
+    Scope::new().interpret_program(ast, &mut Global::default(), output)?;
     Ok(())
 }
 

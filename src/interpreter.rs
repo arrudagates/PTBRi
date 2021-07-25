@@ -89,11 +89,12 @@ impl<'a> Scope<'a> {
         &self,
         program: Vec<Box<AstNode>>,
         global: &mut Global,
+        output: &mut String,
     ) -> Result<Return, Error> {
         let program = program.into_iter();
 
         for step in program {
-            match self.interpret_ast(*step, global)? {
+            match self.interpret_ast(*step, global, output)? {
                 Return::None => (),
                 Return::Value(value) => return Ok(Return::Value(value)),
             }
@@ -106,6 +107,7 @@ impl<'a> Scope<'a> {
         ident: String,
         variables: Vec<Value>,
         global: &mut Global,
+        output: &mut String,
     ) -> Result<Value, Error> {
         if global.recursion > global.recursion_limit {
             let peak = global.recursion.clone();
@@ -146,7 +148,7 @@ impl<'a> Scope<'a> {
             };
             if let Some((block, vars)) = block {
                 let scope = me.go_down(vars);
-                let val = match scope.interpret_program(block, global)? {
+                let val = match scope.interpret_program(block, global, output)? {
                     Return::None => Value::Void,
                     Return::Value(val) => val,
                 };
@@ -161,18 +163,23 @@ impl<'a> Scope<'a> {
         }
     }
 
-    pub fn interpret_expr(&self, expr: Expression, global: &mut Global) -> Result<Value, Error> {
+    pub fn interpret_expr(
+        &self,
+        expr: Expression,
+        global: &mut Global,
+        output: &mut String,
+    ) -> Result<Value, Error> {
         macro_rules! interpret_operation {
             ($left:expr, $right:expr, $op:tt) => {
 
-                self.interpret_expr($left, global)? $op self.interpret_expr($right, global)?
+                self.interpret_expr($left, global, output)? $op self.interpret_expr($right, global, output)?
             }
         }
 
         macro_rules! interpret_bool {
             ($left:expr, $right:expr, $op:tt) => {
 
-                bool::try_from(self.interpret_expr($left, global)?)? $op bool::try_from(self.interpret_expr($right, global)?)?
+                bool::try_from(self.interpret_expr($left, global, output)?)? $op bool::try_from(self.interpret_expr($right, global, output)?)?
             }
         }
 
@@ -197,9 +204,10 @@ impl<'a> Scope<'a> {
             Expression::FnCall(ident, vars) => self.interpret_fn(
                 ident,
                 vars.into_iter()
-                    .map(|var| -> Value { self.interpret_expr(var, global).unwrap() })
+                    .map(|var| -> Value { self.interpret_expr(var, global, output).unwrap() })
                     .collect(),
                 global,
+                output,
             ),
             Expression::Entrada(input_type) => {
                 let mut input = String::new();
@@ -221,36 +229,45 @@ impl<'a> Scope<'a> {
         }
     }
 
-    pub fn interpret_ast(&self, ast: AstNode, global: &mut Global) -> Result<Return, Error> {
+    pub fn interpret_ast(
+        &self,
+        ast: AstNode,
+        global: &mut Global,
+        output: &mut String,
+    ) -> Result<Return, Error> {
         match ast {
             AstNode::Print(exprs) => {
                 let mut print_string = String::new();
                 for expr in exprs.into_iter() {
-                    print_string
-                        .push_str(format!(" {}", &self.interpret_expr(expr, global)?).as_str());
+                    print_string.push_str(
+                        format!(" {}", &self.interpret_expr(expr, global, output)?).as_str(),
+                    );
                 }
 
                 println!("{}", print_string.trim());
+
+                #[cfg(target_arch = "wasm32")]
+                output.push_str(format!("{}\n", print_string.trim()).as_str());
             }
             AstNode::Val(_) => {}
             AstNode::Definition { ident, expr } => {
-                let value = self.interpret_expr(expr, global)?;
+                let value = self.interpret_expr(expr, global, output)?;
                 {
                     self.variables.borrow_mut().insert(ident, value);
                 }
             }
             AstNode::If { comp, block, senao } => {
-                if let Value::Bool(boolean) = self.interpret_expr(comp, global)? {
+                if let Value::Bool(boolean) = self.interpret_expr(comp, global, output)? {
                     if boolean {
-                        return self.interpret_program(block, global);
+                        return self.interpret_program(block, global, output);
                     } else if let Some(block) = senao {
-                        return self.interpret_program(block, global);
+                        return self.interpret_program(block, global, output);
                     }
                 }
             }
             AstNode::While { comp, block } => {
-                while let Value::Bool(true) = self.interpret_expr(comp.clone(), global)? {
-                    self.interpret_program(block.clone(), global)?;
+                while let Value::Bool(true) = self.interpret_expr(comp.clone(), global, output)? {
+                    self.interpret_program(block.clone(), global, output)?;
                 }
             }
             AstNode::Function { ident, args, block } => {
@@ -262,12 +279,15 @@ impl<'a> Scope<'a> {
                 self.interpret_fn(
                     ident,
                     vars.into_iter()
-                        .map(|expr| self.interpret_expr(expr, global).unwrap())
+                        .map(|expr| self.interpret_expr(expr, global, output).unwrap())
                         .collect(),
                     global,
+                    output,
                 )?;
             }
-            AstNode::Return(expr) => return Ok(Return::Value(self.interpret_expr(expr, global)?)),
+            AstNode::Return(expr) => {
+                return Ok(Return::Value(self.interpret_expr(expr, global, output)?))
+            }
             AstNode::Expression(_) => {}
         }
         Ok(Return::None)

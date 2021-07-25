@@ -1,6 +1,7 @@
-use std::{env::args, fs};
-
+#[cfg(not(target_arch = "wasm32"))]
 use anyhow::Result;
+#[cfg(not(target_arch = "wasm32"))]
+use std::{env::args, fs};
 
 extern crate pest;
 #[macro_use]
@@ -17,6 +18,7 @@ pub use error::*;
 mod parser;
 pub use parser::*;
 
+#[cfg(not(target_arch = "wasm32"))]
 pub fn main() -> Result<()> {
     let mut program = String::new();
 
@@ -31,5 +33,67 @@ pub fn main() -> Result<()> {
         }
     }
 
-    run(program)
+    run_code(program, &mut String::new())
+}
+
+#[cfg(target_arch = "wasm32")]
+mod web {
+
+    use crate::*;
+    use yew::prelude::*;
+
+    pub enum Msg {
+        Run,
+        CodeChange(String),
+    }
+
+    #[derive(Debug)]
+    pub struct Model {
+        link: ComponentLink<Self>,
+        code: String,
+        output: String,
+    }
+
+    impl Component for Model {
+        type Message = Msg;
+        type Properties = ();
+
+        fn create(_props: Self::Properties, link: ComponentLink<Self>) -> Self {
+            Self {
+                link,
+                code: String::new(),
+                output: String::new(),
+            }
+        }
+
+        fn update(&mut self, msg: Self::Message) -> ShouldRender {
+            match msg {
+                Msg::Run => {
+                    self.output = String::new();
+                    run_code(self.code.clone(), &mut self.output).unwrap();
+                }
+                Msg::CodeChange(code) => self.code = code,
+            }
+            true
+        }
+
+        fn change(&mut self, _props: Self::Properties) -> ShouldRender {
+            false
+        }
+
+        fn view(&self) -> Html {
+            html! {
+                <div>
+                    <textarea cols="100" rows="20" onchange=self.link.callback(|event| Msg::CodeChange(if let ChangeData::Value(value) = event {value} else {String::new()}))></textarea>
+                    <textarea cols="100" rows="20">{ self.output.clone() }</textarea>
+                    <button onclick=self.link.callback(|_| Msg::Run)>{ "Run" }</button>
+                </div>
+            }
+        }
+    }
+}
+
+#[cfg(target_arch = "wasm32")]
+fn main() {
+    yew::start_app::<web::Model>();
 }
