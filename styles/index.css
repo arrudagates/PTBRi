@@ -1,0 +1,146 @@
+body {
+    background-color: #22272E;
+    height: 100vh;
+}
+
+header {
+    width: 90%;
+    height: 120px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+h1 {
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 36px;
+    line-height: 42px;
+
+    color: #A4B6C6;
+}
+
+button {
+    background: #363E47;
+    border: 1px solid #434C55;
+    box-sizing: border-box;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 10px;
+}
+
+.runButton {
+    width: 232px;
+    height: 54px;
+
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 30px;
+    line-height: 35px;
+
+    color: #A4B6C6;
+}
+
+.tags {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.tag {
+    width: 224px;
+    height: 30px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 0px 1e+06px 1e+06px 0px;
+    text-decoration: none;
+    padding: 0 20px;
+}
+
+.tag span {
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 18px;
+    line-height: 21px;
+    color: #000000;
+}
+
+.project {
+    background: #227588;
+}
+
+.design {
+    background: #F3DE66;
+}
+
+.terminals {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    height: 80%;
+}
+
+section {
+    width: 48%;
+    height: 100%;
+    border-radius: 5px;
+}
+
+.input {
+    background: #E0A486;
+}
+
+.output {
+    background: #E7492D;
+}
+
+.terminalHeader {
+    height: 50px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0 25px;
+}
+
+h2 {
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 24px;
+    line-height: 28px;
+
+    color: #22272E;
+}
+
+.terminalButton {
+    width: 151px;
+    height: 35px;
+    background: #363E47;
+    border: 1px solid #434C55;
+    box-sizing: border-box;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 10px;
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 18px;
+    line-height: 21px;
+    text-align: center;
+    color: #A4B6C6;
+}
+
+.terminal {
+    width: 95%;
+    height: 90%;
+    margin: 0 auto;
+    background: #0F1010;
+    box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.25);
+    border-radius: 15px;
+}

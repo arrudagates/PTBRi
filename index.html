@@ -1,6 +1,56 @@
-<html>
-    <head>
-        <meta charset="utf-8" />
-        <title>Yew App</title>
-    </head>
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width">
+    <title>Barbearia Alura</title>
+    <link rel="stylesheet" href="./styles/reset.css">
+    <link rel="stylesheet" href="./styles/index.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <header>
+
+        <h1>PTBR interpreter</h1>
+        
+        <button class="runButton">Run</button>
+
+        <div class="tags">
+            <a href="https://github.com/arrudagates/PTBRi" class="tag project">
+                <span>GitHub project</span>
+                <img src="./styles/github.svg" />
+            </a>
+            
+            <a href="https://github.com/KistVictor" class="tag design">
+                <span>Design by KistVictor</span>
+                <img src="./styles/github.svg" />
+            </a>
+        </div>
+            
+    </header>
+
+    <div class="terminals">
+        <section class="input">
+            <div class="terminalHeader">
+                <h2>Input</h2>
+                <button class="terminalButton">Language</button>
+            </div>
+            <div class="terminal"></div>
+        </section>
+
+        <section class="output">
+            <div class="terminalHeader">
+                <h2>output</h2>
+                <button class="terminalButton">Clear</button>
+            </div>
+            <div class="terminal"></div>
+        </section>
+    </div>
+
+</body>
 </html>
