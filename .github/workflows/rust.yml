@@ -10,12 +10,21 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  build:
+  build_cli:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
     - name: Build
       run: cargo build --verbose
+
+
+  build_web:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: jetli/trunk-action@v0.1.0
+    - name: Build
+      run: trunk build
       
   test:
     runs-on: ubuntu-latest
