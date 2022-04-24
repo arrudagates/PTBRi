@@ -2,11 +2,11 @@
 
 ![example workflow](https://github.com/arrudagates/PTBRi/actions/workflows/rust.yml/badge.svg)
 
-## What is PTBR?
+## O que é PTBR?
 
-PTBR is a language being developed for easy understanding with it's main goal to be a simple way to introduce Portuguese speakers without any technical background to programming
+PTBR é uma linguagem que está sendo desenvolvida para facilitar o entendimento com o objetivo principal de ser uma forma simples de apresentar falantes de português sem nenhum conhecimento técnico em programação
 
-Here's an example:
+Um exemplo:
 
 ```
 a é 5
@@ -14,25 +14,24 @@ b é 2
 mostre a vezes b
 ```
 
-## Where are we in the development?
+## Onde estamos no desenvolvimento?
 
-PTBRi started as an interpreter forked from rust-lci, a LOLCODE interpreter, following that logic, the language itself started as LOLCODE. That old codebase can be found at [old-PTBRi](https://github.com/arrudagates/old-PTBRi)
+O PTBRi começou como um fork do interpretador do rust-lci, um interpretador LOLCODE, seguindo essa lógica, a própria linguagem começou como LOLCODE. Essa base de código antiga pode ser encontrada em [old-PTBRi](https://github.com/arrudagates/old-PTBRi)
 
-This is a rewrite from scratch with a complete rewrite of everything from the language specification to the parser and interpreter.
+Esta é uma reescrita do zero com uma reescrita completa de tudo, desde a especificação da linguagem até o analisador e o interpretador.
 
-The current code is far from production ready, there's so much to be done, the language is far from being 100% implemented and both the parser and interpreter are prototype level code.
+O código atual está longe de estar pronto para produção, há muito a ser feito, a linguagem está longe de ser 100% implementada e tanto o analisador quanto o interpretador são códigos em nível de protótipo.
 
-## How to use
+## Como usar
 
-Currently we have a basic prototype, it can be tested by running the code with a ptbr file as argument:
+Atualmente temos um protótipo básico, ele pode ser testado executando o código com um arquivo ptbr como argumento:
 
 ```
 cargo run tests/basic.ptbr
-// or compiled
+// ou compilado
 ptbri tests/basic.ptbr
 ```
 
-## What's already implemented?
+## O que já está implementado?
 
-You can check the already implemented syntax [here](ptbr_definitions.md)
-
+Você pode verificar a sintaxe já implementada [aqui](ptbr_definitions.md)
