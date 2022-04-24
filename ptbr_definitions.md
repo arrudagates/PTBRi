@@ -1,40 +1,40 @@
-# Syntax definitions for PTBR
+# Definições de sintaxe para PTBR
 
-PTBR is an exotic language because it lacks common symbols used in most languages, like parenthesis, and also makes use of characters usually ignored, like `é`
+PTBR é uma linguagem exótica porque carece de símbolos comuns usados na maioria das linguagens, como parênteses, e também faz uso de caracteres normalmente ignorados, como `é`
 
-## Variable definition
+## Definição de variável
 
-Variable definitions are written as Identifier followed by the keyword `é` followed by the value/expression/user input to be assigned
+As definições de variáveis são escritas como Identificador seguido pela palavra-chave `é` seguida pelo valor/expressão/entrada do usuário a ser atribuída
 
-Example:
+Exemplo:
 ```
 a é 1
 ```
 
-## Output
+## Saída
 
-Output to the screen is written as the keyword `mostre` followed by the value/expression to be displayed
+A saída para a tela é escrita como a palavra-chave `mostre` seguida pelo valor/expressão a ser exibido
 
-Multiple values can be displayed on the same line by appending them in the after the last argument of the `mostre` keyword using the `e` keyword
+Vários valores podem ser exibidos na mesma linha anexando-os após o último argumento da palavra-chave `mostre` usando a palavra-chave `e`
 
-Example:
+Exemplo:
 ```
 mostre a
 mostre a e b
 mostre a e b e a mais b
 ```
 
-## Expressions
+## Expressões
 
-Expressions are written as the keyword of the expression surrounded with a value/identifier/expression on both sides
+As expressões são escritas como a palavra-chave da expressão cercada por um valor/identificador/expressão em ambos os lados
 
-Valid expression keywords are:
+As palavras-chave de expressão válidas são:
 - mais
 - menos
 - vezes
 - dividido por
 
-Example:
+Exemplo:
 ```
 a mais 1
 a menos 1
@@ -42,27 +42,27 @@ a vezes 1
 a dividido por 1
 ```
 
-## If Statements
+## Declarações If
 
-If statements are written as the keyword `se` followed by a comparison operator (and optionally a modifier) surrounded by a value/identifier/expression on both sides
+Se as instruções forem escritas como a palavra-chave `se` seguida por um operador de comparação (e opcionalmente um modificador) cercado por um valor/identificador/expressão em ambos os lados
 
-If statements can also have an else statement after the code block and the end keyword, explained at the section "Else"
+As instruções if também podem ter uma instrução else após o bloco de código e a palavra-chave end, explicada na seção "Else"
 
-If statements require code to be run, everything between the if statement and the keyword `até aqui` is considered inner code of the if statement
+Se as instruções exigem que o código seja executado, tudo entre a instrução if e a palavra-chave `até aqui` é considerado código interno da instrução if
 
-Valid comparison operators are:
+Os operadores de comparação válidos são:
 - é
 - não é
 
-Valid comparison modifiers are:
+Os modificadores de comparação válidos são:
 - maior que
 - menor que
 - maior ou igual a
 - menor ou igual a
 
-You can also add logical conditions for the comparisons by placing one on each side of either `e` (and) or `ou` (or)
+Você também pode adicionar condições lógicas para as comparações colocando uma em cada lado de `e` (e) ou `ou` (ou)
 
-Example:
+Exemplo:
 ```
 se a é 1
 se a não é 1
@@ -77,13 +77,13 @@ se a é 1 e b é 2
 se a é 1 ou b é 2
 ```
 
-## Else
+## Senão
 
-Else statements are an optional follow up to an if statement, if that statement evaluates to false, the interpreter will jump to the `senão` keyword immediately after the end keyword, if present
+As instruções Else são um acompanhamento opcional de uma instrução if, se essa instrução for avaliada como falsa, o interpretador pulará para a palavra-chave `senão` imediatamente após a palavra-chave end, se presente
 
-Else statements require code to be run, everything between the else statement and the keyword `até aqui` is considered inner code of the else statement
+As instruções Else requerem que o código seja executado, tudo entre a instrução else e a palavra-chave `até aqui` é considerado código interno da instrução else
 
-Example:
+Exemplo:
 ```
 se a é 1
 mostre a
@@ -96,23 +96,23 @@ até aqui
 
 ## While Loops
 
-While loops are written as the keyword `enquanto` followed by a comparison operator (and optionally a modifier) surrounded by a value/identifier/expression on both sides
+Enquanto os loops são escritos como a palavra-chave `enquanto` seguida por um operador de comparação (e opcionalmente um modificador) cercado por um valor/identificador/expressão em ambos os lados
 
-While loops require code to be run, everything between the while loop and the keyword `até aqui` is considered inner code of the while loop
+Enquanto os loops exigem que o código seja executado, tudo entre o loop while e a palavra-chave `até aqui` é considerado código interno do loop while
 
-Valid comparison operators are:
+Os operadores de comparação válidos são:
 - for
 - não for
 
-Valid comparison modifiers are:
+Os modificadores de comparação válidos são:
 - maior que
 - menor que
 - maior ou igual a
 - menor ou igual a
 
-You can also add logical conditions for the comparisons by placing one on each side of either `e` (and) or `ou` (or)
+Você também pode adicionar condições lógicas para as comparações colocando uma em cada lado de `e` (e) ou `ou` (ou)
 
-Example:
+Exemplo:
 ```
 enquanto a for 1
 enquanto a não for 1
@@ -122,14 +122,13 @@ enquanto a não for menor ou igual a 1
 enquanto a for 1 e b for 2
 enquanto a for 1 ou b for 2
 ```
+## Definição de função
 
-## Function Definition
+As definições de função são escritas como a palavra-chave `defina a função` seguida por um identificador e opcionalmente a palavra-chave `usando` e uma cadeia de identificadores a serem usados dentro do escopo da função
 
-Function definitions are written as the keyword `defina a função` followed by an identifier and optionally the keyword `usando` and a chain of identifiers to be used inside the scope of the function
+As funções exigem que o código seja executado, tudo entre a definição da função e a palavra-chave `até aqui` é considerado código interno da função
 
-Functions require code to be run, everything between the function definition and the keyword `até aqui` is considered inner code of the function
-
-Example:
+Exemplo:
 ```
 defina a função teste
 mostre "teste"
@@ -140,11 +139,11 @@ mostre a mais b
 até aqui
 ```
 
-## Function Calls
+## Chamadas de Função
 
-Function calls are written as the keyword `função` followed by it's identifier and optionally the keyword `usando` and a chain of identifiers to be used by the function, if it's declared with identifiers
+As chamadas de funções são escritas como a palavra-chave `função` seguida de seu identificador e opcionalmente a palavra-chave `usando` e uma cadeia de identificadores a serem usados pela função, caso ela seja declarada com identificadores
 
-Example:
+Exemplo:
 ```
 função teste
 
@@ -155,11 +154,11 @@ b é 5
 função soma usando a e b
 ```
 
-## User Input
+## Entrada do usuário
 
-Use input is done by assigning the keyword `entrada de` followed by the type of data being entered to a variable
+O uso de entrada é feito atribuindo a palavra-chave `entrada de` seguida pelo tipo de dados que está sendo inserido em uma variável
 
-Types of input supported:
+Tipos de entrada suportados:
 - número
 - texto
 
@@ -172,15 +171,15 @@ mostre "a é " e a
 mostre "b é " e b
 ```
 
-## Function Returns
+## Retornos de função
 
-Function returns are written as the keyword `retorne` followed by the value/expression/identifier to be returned
+Os retornos de função são escritos como a palavra-chave `retorne` seguida pelo valor/expressão/identificador a ser retornado
 
-Function returns have to be inside it's respective function, because the values being returned are bound to that function's scope, but they can also be nested inside other blocks of code, like those of if statements that reside inside the function
+Os retornos de função devem estar dentro de sua respectiva função, porque os valores retornados estão vinculados ao escopo dessa função, mas também podem ser aninhados dentro de outros blocos de código, como os de instruções if que residem dentro da função
 
-Function returns also mean that functions can now be called as values, if that function returns a value
+Os retornos de função também significam que as funções agora podem ser chamadas como valores, se essa função retornar um valor
 
-Example:
+Exemplo:
 ```
 defina a função soma usando a e b
 
@@ -195,15 +194,15 @@ b é 8
 mostre função soma usando a e b
 ```
 
-## Comments
+## Comentários
 
-There are two types of comments available, multi-line and single-line:
+Existem dois tipos de comentários disponíveis, de várias linhas e de uma linha:
 
-Multiline-comments are surrounded by the prefix keyword `comentário` and the suffix `fim do comentário`
+Comentários de várias linhas são cercados pela palavra-chave de prefixo `comentário` e o sufixo `fim do comentário`
 
-Single-line comments are surrounded by the prefix keyword `comentário` and the end of the line
+Comentários de linha única são cercados pela palavra-chave de prefixo `comentário` e o final da linha
 
-Example:
+Exemplo:
 ```
 comentário this is a single-line comment
 
